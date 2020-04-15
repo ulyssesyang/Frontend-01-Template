@@ -42,15 +42,19 @@ Manipulate DOM with native JS:
 
 2.讲讲 position float display 各有哪些取值，它们互相之间会如何影响？
 
-• Display
+- Display
 The display CSS property sets whether an element is treated as a block or inline element and the layout used for its children, such as flow layout, grid or flex.
-• Normal flow
+
+- Normal flow
 Inline items are laid out in the same way as the letters in words in text, one after the other across the available space until there is no more room, then starting a new line below. Block items stack vertically, like paragraphs and like the items in a bulleted list. Normal flow also includes relative positioning of block or inline items, and run-in boxes.
-• Float
+
+- Float
 A floated item is taken out of the normal flow and shifted to the left or right as far as possible in the space available. Other content then flows alongside the floated item. The float property may have one of three values: . Absolutely positioned or fixed items cannot be floated. Other elements normally flow around floated items, unless they are prevented from doing so by their clear property.
-• positioning
+
+- positioning
 Positioning allows you to take elements out of the normal document layout flow, and make them behave differently, for example sitting on top of one another, or always remaining in the same place inside the browser viewport.
-• Absolute positioning
+
+- Absolute positioning
 An absolutely positioned item has no place in, and no effect on, the normal flow of other items. It occupies its assigned position in its container independently of other items.
 
 3.JavaScript 启动后，内存中有多少个对象？如何用代码来获得这些信息？
