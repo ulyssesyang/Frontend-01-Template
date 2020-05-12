@@ -181,7 +181,7 @@ class TrunkedBodyParser {
         this.current = this.WAITING_LENGTH;
     }
     receiveChar(char) {
-        console.log('char:',char)
+        // console.log('char:',char)
         if (this.current === this.WAITING_LENGTH) {
             if (char === '\r') {
                 if (this.length === 0) {
@@ -190,11 +190,8 @@ class TrunkedBodyParser {
                     this.current = this.WAITING_LENGTH_LINE_END;
                 }
             } else {
-                this.length *= 10;
-                this.length += char.charCodeAt(0) - '0'.charCodeAt(0);
-                console.log('char.charCodeAt(0):',char.charCodeAt(0))
-                console.log('0.charCodeAt(0):','0'.charCodeAt(0))
-                console.log('this.length:',this.length)
+                this.length = parseInt('0x'+char);
+                // console.log('this.length:',this.length)
             }
         } else if (this.current === this.WAITING_LENGTH_LINE_END) {
             if (char === '\n') {
@@ -207,12 +204,12 @@ class TrunkedBodyParser {
                 this.current = this.WAITING_NEW_LENGTH;
             }
         } else if (this.current === this.WAITING_NEW_LENGTH) {
-            console.log('WAITING_NEW_LENGTH:',this.content)
+            // console.log('WAITING_NEW_LENGTH:',this.content)
             if (char === '\r') {
                 this.current = this.WAITING_NEW_LENGTH_END;
             }
         } else if (this.current === this.WAITING_NEW_LENGTH_END) {
-            console.log('WAITING_NEW_LENGTH_END',this.content)
+            // console.log('WAITING_NEW_LENGTH_END',this.content)
             if (char === '\n') {
                 this.current = this.WAITING_LENGTH;
             }

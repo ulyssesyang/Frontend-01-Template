@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     // must be a single word
     // space will break
-    res.end('hello');
+    res.end('hello world');
 });
 
 server.listen(8080);
