@@ -9,8 +9,7 @@
         id: 'globalThis',
         children: [{
                 id: 'Global Value Objects',
-                children: [
-                    {
+                children: [{
                         id: 'Infinity'
                     },
                     {
@@ -239,33 +238,56 @@
             },
         ]
     };
-    console.log({...data});
+    console.log({
+        ...data
+    });
+
+    function prepareChildrenNode(node, propertyName) {
+        if (!node.children) {
+            node.children = [];
+        }
+
+        let checkExisting = false;
+        node.children.forEach(child => {
+            checkExisting = child.id === propertyName;
+        });
+
+        // check if already existing
+        if (checkExisting) {
+            return
+        } else {
+            node.children.push({
+                id: propertyName,
+            });
+        }
+    }
+
+    const set = new Set();
 
     function navigateNode(node) {
-        console.log('navigateNode:', node)
+        console.log('navigateNode:', node);
+
+        if (set.has(node.id)) {
+            return;
+        }
+        set.add(node.id);
+
         const nodeObject = globalThis[node.id];
 
         if (!node.children && nodeObject) {
-            node.children = [];
             for (const propertyName of Object.getOwnPropertyNames(nodeObject)) {
                 let property = Object.getOwnPropertyDescriptor(nodeObject, propertyName);
 
                 if (property.hasOwnProperty('value') && property.value instanceof Object) {
-                    node.children.push({
-                        id: propertyName,
-                    });
+                    prepareChildrenNode(node, propertyName);
                 }
 
                 if (property.hasOwnProperty('get') && property.get instanceof Object) {
-                    node.children.push({
-                        id: propertyName,
-                    });
+                    prepareChildrenNode(node, propertyName);
                 }
 
                 if (property.hasOwnProperty('set') && property.set instanceof Object) {
-                    node.children.push({
-                        id: propertyName,
-                    });
+                    prepareChildrenNode(node, propertyName);
                 }
             }
         }
@@ -282,100 +304,6 @@
     navigateNode(data);
 
     console.log(data);
-
-    const set = new Set();
-    const globalObjectsNames = [
-        'eval',
-        'isFinite',
-        'isNaN',
-        'parseFloat',
-        'parseInt',
-        'decodeURI',
-        'decodeURIComponent',
-        'encodeURI',
-        'encodeURIComponent',
-        'Array',
-        'Date',
-        'RegExp',
-        'Promise',
-        'Proxy',
-        'Map',
-        'WeakMap',
-        'Set',
-        'WeakSet',
-        'Function',
-        'Boolean',
-        'String',
-        'Number',
-        'Symbol',
-        'Object',
-        'Error',
-        'EvalError',
-        'RangeError',
-        'ReferenceError',
-        'SyntaxError',
-        'TypeError',
-        'URIError',
-        'ArrayBuffer',
-        'SharedArrayBuffer',
-        'DataView',
-        'Float32Array',
-        'Float64Array',
-        'Int8Array',
-        'Int16Array',
-        'Int32Array',
-        'Uint8Array',
-        'Uint16Array',
-        'Uint32Array',
-        'Uint8ClampedArray',
-        'Atomics',
-        'JSON',
-        'Math',
-        'Reflect'
-    ];
-    const queue = [];
-    for (const p of globalObjectsNames) {
-        queue.push({
-            path: [p],
-            object: this[p]
-        })
-    }
-
-    let current;
-
-    while (queue.length) {
-        current = queue.shift();
-        console.log(current.path.join(','));
-        if (set.has(current.object)) {
-            continue;
-        }
-        set.add(current.object);
-
-        for (const p of Object.getOwnPropertyNames(current.object)) {
-            let property = Object.getOwnPropertyDescriptor(current.object, p);
-
-            if (property.hasOwnProperty('value') && property.value instanceof Object) {
-                queue.push({
-                    path: current.path.concat([p]),
-                    object: property.value
-                });
-            }
-
-            if (property.hasOwnProperty('get') && property.get instanceof Object) {
-                queue.push({
-                    path: current.path.concat([p]),
-                    object: property.get
-                });
-            }
-
-            if (property.hasOwnProperty('set') && property.set instanceof Object) {
-                queue.push({
-                    path: current.path.concat([p]),
-                    object: property.set
-                });
-            }
-        }
-    }
 
     console.log('set:', set);
 
