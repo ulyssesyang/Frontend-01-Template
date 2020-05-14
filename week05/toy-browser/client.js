@@ -190,7 +190,8 @@ class TrunkedBodyParser {
                     this.current = this.WAITING_LENGTH_LINE_END;
                 }
             } else {
-                this.length = parseInt('0x'+char);
+                this.length *= 16;
+                this.length += parseInt(char, 16);
                 // console.log('this.length:',this.length)
             }
         } else if (this.current === this.WAITING_LENGTH_LINE_END) {

@@ -314,14 +314,7 @@
         width,
         height,
         modes: {
-            default: [{
-                    type: 'collapse-expand',
-                    onChange: function onChange(item, collapsed) {
-                        const data = item.get('model').data;
-                        data.collapsed = collapsed;
-                        return true;
-                    },
-                },
+            default: [
                 'drag-canvas',
                 'zoom-canvas',
             ],
