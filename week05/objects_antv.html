@@ -5,6 +5,8 @@
     <div id="container" />
 </body>
 <script>
+    // 根据ecma262标准，对主要全局Objects进行分类，并初始化node tree
+    // node tree 数据结构，按照antV G6的node标准
     const data = {
         id: 'globalThis',
         children: [{
@@ -238,10 +240,9 @@
             },
         ]
     };
-    console.log({
-        ...data
-    });
 
+    // 检测node是否已经有children node
+    // 避免重复children node
     function prepareChildrenNode(node, propertyName) {
         if (!node.children) {
             node.children = [];
@@ -262,6 +263,7 @@
         }
     }
 
+    // 用set控制全局对象唯一性
     const set = new Set();
 
     function navigateNode(node) {
@@ -294,6 +296,7 @@
 
         if (node.children) {
             for (const child of node.children) {
+                // 遍历所有children node
                 navigateNode(child);
             }
         } else {
@@ -301,14 +304,17 @@
         }
     }
 
+    // 开始遍历数据node tree
     navigateNode(data);
 
-    console.log(data);
-
+    console.log('data:', data);
     console.log('set:', set);
 
+    // 根据浏览器大小设置宽度、高度
     const width = document.getElementById('container').scrollWidth;
     const height = document.getElementById('container').scrollHeight || screen.height - 200;
+    
+    // 初始化G6渲染树
     const graph = new G6.TreeGraph({
         container: 'container',
         width,
@@ -357,6 +363,7 @@
         },
     });
 
+    // 自定义渲染树的node样式
     graph.node(function (node) {
         return {
             label: node.id,
@@ -367,6 +374,7 @@
         };
     });
 
+    // 加载并渲染数据
     graph.data(data);
     graph.render();
     graph.fitView();
