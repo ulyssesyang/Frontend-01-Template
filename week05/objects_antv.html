@@ -243,7 +243,7 @@
 
     // 检测node是否已经有children node
     // 避免重复children node
-    function prepareChildrenNode(node, propertyName) {
+    function prepareChildrenNode(node, propertyName, object) {
         if (!node.children) {
             node.children = [];
         }
@@ -259,6 +259,7 @@
         } else {
             node.children.push({
                 id: propertyName,
+                object
             });
         }
     }
@@ -274,22 +275,25 @@
         }
         set.add(node.id);
 
-        const nodeObject = globalThis[node.id];
+        const nodeObject = node.object || globalThis[node.id];
 
         if (!node.children && nodeObject) {
             for (const propertyName of Object.getOwnPropertyNames(nodeObject)) {
                 let property = Object.getOwnPropertyDescriptor(nodeObject, propertyName);
 
-                if (property.hasOwnProperty('value') && property.value instanceof Object) {
-                    prepareChildrenNode(node, propertyName);
+                if (property.hasOwnProperty('value') && (property.value instanceof Object)) {
+                    const object = property.value;
+                    prepareChildrenNode(node, propertyName, object);
                 }
 
-                if (property.hasOwnProperty('get') && property.get instanceof Object) {
-                    prepareChildrenNode(node, propertyName);
+                if (property.hasOwnProperty('get') && typeof property.get === 'function') {
+                    const object = property.get;
+                    prepareChildrenNode(node, propertyName, object);
                 }
 
-                if (property.hasOwnProperty('set') && property.set instanceof Object) {
-                    prepareChildrenNode(node, propertyName);
+                if (property.hasOwnProperty('set') && typeof property.set === 'function') {
+                    const object = property.set;
+                    prepareChildrenNode(node, propertyName, object);
                 }
             }
         }
