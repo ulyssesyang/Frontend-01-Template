@@ -4,14 +4,14 @@
 
 ### 实现思路
 
-- 参考[ecma262标准]('https://tc39.es/ecma262/')，把JS的主要全局对象列出
+- 参考[ecma262标准](https://tc39.es/ecma262/)，把JS的主要全局对象列出
 - 参考[G6 Graph Visualization Engine](https://g6.antv.vision/en/examples/tree/compactBox)
 - 鉴于需要兼顾对象分类和其子类属性关系，选用node tree数据结构
 - 选用AntV G6的[Mindmap API](https://g6.antv.vision/en/examples/tree/mindmap)来实现渲染
 
 ### 代码实现
 
-- [本地运行文件]('./objects_antv.html‘)
+- [本地运行文件](./objects_antv.html)
 - [codesandbox云端运行](https://codesandbox.io/s/fancy-frost-j6dro)
 
 ## browser客户端与服务端通信的几种方式
