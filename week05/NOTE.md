@@ -1,5 +1,10 @@
 # 每周总结可以写在这里
 
+## 用 G6 antv 可视化 Realm 中的所有对象
+
+- [本地运行文件]('./objects_antv.html‘)
+- [codesandbox云端运行](https://codesandbox.io/s/fancy-frost-j6dro)
+
 ## browser客户端与服务端通信的几种方式
 
 ### browser地址栏
