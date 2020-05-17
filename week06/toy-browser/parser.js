@@ -12,6 +12,7 @@ const stack = [{
 }];
 
 let rules = [];
+
 function addCSSRules(text) {
 
     const ast = css.parse(text);
@@ -41,8 +42,36 @@ function match(element, selector) {
     }
 }
 
-function specificity() {
-    return 0;
+function specificity(selector) {
+    const p = [0, 0, 0, 0];
+    const selectorParts = selector.split(' ');
+    for (const part of selectorParts) {
+        if (part.charAt(0) === '#') {
+            p[1] += 1;
+        } else if (part.charAt(0) === '.') {
+            p[2] += 1;
+        } else {
+            p[3] += 1;
+        }
+    }
+
+    return p;
+}
+
+function compare(sp1, sp2) {
+    if (sp1[0] - sp2[0]) {
+        return sp1[0] - sp2[0];
+    }
+
+    if (sp1[1] - sp2[1]) {
+        return sp1[1] - sp2[1];
+    }
+
+    if (sp1[2] - sp2[2]) {
+        return sp1[2] - sp2[2];
+    }
+
+    return sp1[3] - sp2[3];
 }
 
 function computeCSS(element) {
@@ -73,14 +102,22 @@ function computeCSS(element) {
 
         if (matched) {
             // 如果匹配，加入
-            let computedStyle = element.computedStyle;
+            const sp = specificity(rule.selectors[0]);
+            const computedStyle = element.computedStyle;
 
             for (const declaration of rule.declarations) {
+
                 if (!computedStyle[declaration.property]) {
                     computedStyle[declaration.property] = {};
                 }
 
-                computedStyle[declaration.property].value = declaration.value;
+                if (!computedStyle[declaration.specificity]) {
+                    computedStyle[declaration.property].value = declaration.value;
+                    computedStyle[declaration.property].specificity = sp;
+                } else if (compare(computedStyle[declaration.property].specificity, sp) < 0) {
+                    computedStyle[declaration.property].value = declaration.value;
+                    computedStyle[declaration.property].specificity = sp;
+                }
             }
             // console.log(element.computedStyle);
         }
@@ -88,7 +125,7 @@ function computeCSS(element) {
 }
 
 function emit(token) {
-    let top = stack[stack.length -1];
+    let top = stack[stack.length - 1];
 
     if (token.type === 'startTag') {
 
@@ -127,7 +164,7 @@ function emit(token) {
             throw new Error('Tag start end doesn\'t match');
 
         } else {
-             
+
             if (top.tagName === 'style') {
                 addCSSRules(top.children[0].content);
             }
@@ -151,7 +188,7 @@ function emit(token) {
     }
 }
 
-function data(c){
+function data(c) {
     if (c === '<') {
 
         return tagOpen;
@@ -162,7 +199,7 @@ function data(c){
             type: 'EOF'
         });
 
-        return ;
+        return;
 
     } else {
 
@@ -176,7 +213,7 @@ function data(c){
     }
 }
 
-function tagOpen(c){
+function tagOpen(c) {
 
     if (c === '/') {
 
@@ -198,7 +235,7 @@ function tagOpen(c){
             content: c
         });
 
-        return ;
+        return;
 
     }
 }
@@ -214,11 +251,11 @@ function endTagOpen(c) {
         return tagName(c);
 
     } else if (c === '>') {
-        
+
     } else if (c === EOF) {
-        
+
     } else {
-        
+
     }
 }
 
@@ -235,7 +272,7 @@ function tagName(c) {
     } else if (c.match(/^[a-zA-Z]$/)) {
 
         // HTML官方标准需要进行toLowercase
-        currentToken.tagName += c; 
+        currentToken.tagName += c;
         return tagName
 
     } else if (c === '>') {
@@ -259,9 +296,9 @@ function selfClosingStartTag(c) {
         return data;
 
     } else if (c === EOF) {
-        
+
     } else {
-        
+
     }
 }
 
@@ -271,7 +308,7 @@ function beforeAttributeName(c) {
 
         return beforeAttributeName;
 
-    } else if (c === '/' ||  c === '>' || c === EOF) {
+    } else if (c === '/' || c === '>' || c === EOF) {
 
         return afterAttributeName(c);
 
@@ -291,7 +328,7 @@ function beforeAttributeName(c) {
 }
 
 function afterAttributeName(c) {
-    
+
     if (c.match(/^[\t\n\f ]$/)) {
 
         return afterAttributeName;
@@ -339,10 +376,10 @@ function attributeName(c) {
 
         // throw new Error('Wrong style');
 
-    } else if (c === "\""  || c === "'" || c === '<') {
+    } else if (c === "\"" || c === "'" || c === '<') {
 
         // throw new Error('Wrong style');
-        
+
     } else {
 
         currentAttribute.name += c;
@@ -384,9 +421,9 @@ function doubleQuotedAttributeValue(c) {
         return afterQuotedAttributeValue;
 
     } else if (c === '\u0000') {
-        
+
     } else if (c === EOF) {
-        
+
     } else {
 
         currentAttribute.value += c;
@@ -402,14 +439,14 @@ function singleQuotedAttributeValue(c) {
         return afterQuotedAttributeValue;
 
     } else if (c === '\u0000') {
-        
+
     } else if (c === EOF) {
-        
+
     } else {
 
         currentAttribute.value += c;
         return singleQuotedAttributeValue;
-        
+
     }
 }
 
@@ -430,7 +467,7 @@ function afterQuotedAttributeValue(c) {
         return data;
 
     } else if (c === EOF) {
-        
+
     } else {
 
         currentAttribute.value += c;
@@ -440,7 +477,7 @@ function afterQuotedAttributeValue(c) {
 }
 
 function unquotedAttributeValue(c) {
-    
+
     if (c.match(/^[\t\n\f ]$/)) {
 
         currentToken[currentAttribute.name] = currentAttribute.value;
@@ -458,11 +495,11 @@ function unquotedAttributeValue(c) {
         return data;
 
     } else if (c === '\u0000') {
-        
+
     } else if (c === '\"' || c === "'" || c === '<' || c === '=' || c === "`") {
-        
+
     } else if (c === EOF) {
-        
+
     } else {
 
         currentAttribute.value += c;
@@ -471,7 +508,7 @@ function unquotedAttributeValue(c) {
     }
 }
 
-module.exports.parseHTML = function parseHTML (html){
+module.exports.parseHTML = function parseHTML(html) {
     let state = data;
     for (const c of html) {
         state = state(c);
