@@ -86,3 +86,48 @@
 - [HTML Data state](https://html.spec.whatwg.org/multipage/parsing.html#data-state)
 - [Parsing HTML documents](https://html.spec.whatwg.org/multipage/parsing.html#tagopen-state)
 - [The "in select" insertion mode](https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inselect)
+
+## CSS Computing
+
+### 环境准备
+
+- 使用开源库[css](https://github.com/reworkcss/css)
+
+### 准备CSS规则
+
+- 遇到style标签时候，对CSS规则进行保存
+- 调用CSS Parser来分析CSS规则
+- 研究分析CSS规则的格式
+
+### 添加调用
+
+- 创建一个元素后，立即计算CSS
+- 理论上，当分析一个元素时，所以CSS规则已经收集完毕
+- 在真实浏览器中，可能遇到写在body的style标签，需要重新CSS计算
+
+### 获取父元素序列
+
+- 在computeCSS函数中，必须知道元素的所有父元素才能判断元素与规则是否匹配
+- 从上一步骤的stack中，可以获取本元素所有的父元素
+- 由于首先获取的是”当前元素“，所以我们获得和计算父元素匹配的顺序是从内向外
+
+### 拆分选择器
+
+- 选择器要从当前元素向外排列
+- 复杂选择器拆成针对单个元素的选择器，用循环匹配父元素队列
+
+### 计算选择器与元素匹配
+
+- 根据选择器的类型和元素属性，计算是否与当前元素匹配
+- 实现了三种基本选择器
+- 实际的浏览器中需要处理复合选择器
+
+### 生成computed属性
+
+- 一旦选择匹配，就应用选择器到元素上，形成computedStyle
+
+### 确定规则覆盖关系
+
+- CSS规则根据CSS Specificity和后来优先规则进行覆盖
+- CSS Specificity是一个四元组：[inline, #id, class name, 伪类、标签等其他元素]，越左边权重越高
+- 一个CSS规则的Specificity是根据包含的简单选择器相加而成
