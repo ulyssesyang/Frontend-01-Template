@@ -40,9 +40,9 @@
   - [match字符串是否包含`abcabx`](/week06/match/match_abcabx.js)
   - [match字符串是否包含`abababx`](/week06/match/match_abababx.js)
 
-- 深入学习
+- KMP算法
   - [字符串KMP算法](https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm)
-  - 用有限状态机实现等效KMP算法
+  - [KMP算法详解](https://zhuanlan.zhihu.com/p/83334559)
 
 ## HTML的解析
 
