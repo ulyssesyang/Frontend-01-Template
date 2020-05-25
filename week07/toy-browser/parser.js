@@ -112,12 +112,13 @@ function computeCSS(element) {
                     computedStyle[declaration.property] = {};
                 }
 
-                if (!computedStyle[declaration.specificity]) {
+                if (!computedStyle[declaration.property].specificity) {
                     computedStyle[declaration.property].value = declaration.value;
                     computedStyle[declaration.property].specificity = sp;
                 } else if (compare(computedStyle[declaration.property].specificity, sp) < 0) {
-                    computedStyle[declaration.property].value = declaration.value;
-                    computedStyle[declaration.property].specificity = sp;
+                    for (let k = 0; k < 4; k++) {
+                        computedStyle[declaration.property][declaration.value][k] += sp[k]; //?
+                    }
                 }
             }
             // console.log(element.computedStyle);
@@ -148,6 +149,7 @@ function emit(token) {
         }
 
         computeCSS(element);
+        layout(element);
 
         top.children.push(element);
         element.parent = top;
@@ -169,11 +171,11 @@ function emit(token) {
             if (top.tagName === 'style') {
                 addCSSRules(top.children[0].content);
             }
-            // apply layout after getting children elements styles
-            layout(top);
             stack.pop();
         }
 
+        // apply layout after getting children elements styles
+        layout(top);
         currentTextNode = null;
 
     } else if (token.type === 'text') {

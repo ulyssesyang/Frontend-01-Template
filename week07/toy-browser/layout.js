@@ -186,8 +186,8 @@ function layout(element) {
             flexLine.push(item);
         } else if (style.flexWrap === 'noWrap' && isAutoMainSize) {
             mainSpace = mainSpace - itemStyle[mainSize];
-            if (itemStyle[crossSize] !== null && itemStyle[crossSize]) {
-                crossSpace = Math.max(crossSpace, itemStyle[crossSize])
+            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== (void 0)) {
+                crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
             }
             flexLine.push(item);
         } else {
@@ -197,9 +197,9 @@ function layout(element) {
             }
 
             if (mainSpace < itemStyle[mainSize]) {
+                flexLine = [item]; //???
                 flexLine.mainSpace = mainSpace;
                 flexLine.crossSpace = crossSpace;
-                flexLine = [item]; //???
                 flexLines.push(flexLine);
                 mainSpace = style[mainSize];
                 crossSpace = 0;
@@ -207,8 +207,8 @@ function layout(element) {
                 flexLine.push(item);
             }
 
-            if (itemStyle[crossSize] !== null && itemStyle[crossSize]) {
-                crossSize = Math.max(crossSpace, itemStyle[crossSize]);
+            if (itemStyle[crossSize] !== null && itemStyle[crossSize] !== (void 0)) {
+                crossSpace = Math.max(crossSpace, itemStyle[crossSize]);
             }
 
             mainSpace = mainSpace - itemStyle[mainSize];
@@ -296,7 +296,6 @@ function layout(element) {
                 }
                 
                 for (let i = 0; i < items.length; i++) {
-                    const item = items[i];
                     itemStyle[mainStart, currentMain];
                     itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle * itemStyle[mainSize];
                     currentMain = itemStyle[mainEnd] + step;
@@ -307,6 +306,8 @@ function layout(element) {
 
     // compute cross Axis sizes
     // align-items, align-self
+
+    // auto sizing
     if (!style[crossSize]) {
         crossSpace = 0;
         elementStyle[crossSize] = 0;
@@ -316,7 +317,7 @@ function layout(element) {
     } else {
         crossSpace = style[crossSize];
         for (let i = 0; i < flexLines.length; i++) {
-            crossSpace = crossSpace + flexLines[i].crossSpace;
+            crossSpace = crossSpace - flexLines[i].crossSpace;
         }
     }
 
@@ -326,36 +327,38 @@ function layout(element) {
         crossBase = 0;
     }
 
-    let lineSize = style[crossSize] / flexLines.length;
+    let lineSize = style[crossSize] / flexLines.length; //?useless
 
     let step; // space between elements
     if (style.alignContent === 'flex-start') {
-        crossBase = crossBase + 0;
+        crossBase += 0;
         step = 0;
     }
     if (style.alignContent === 'flex-end') {
-        crossBase = crossBase + crossSign * crossSpace;
+        crossBase += crossSign * crossSpace;
         step = 0;
     }
     if (style.alignContent === 'center') {
-        crossBase = crossBase + crossSign * crossSpace / 2;
+        crossBase += crossSign * crossSpace / 2;
         step = 0;
     }
     if (style.alignContent === 'space-between') {
         step = crossSpace / (flexLines.length - 1);
-        crossBase = crossBase + 0;
+        crossBase += 0;
     }
     if (style.alignContent === 'space-around') {
         step = crossSpace / (flexLines.length);
-        crossBase = crossBase + crossSign * step / 2;
+        crossBase += crossSign * step / 2;
     }
     if (style.alignContent === 'stretch') {
-        crossBase = crossBase + 0;
+        crossBase += 0;
         step = 0;
     }
 
     flexLines.forEach((items) => {
-        let lineCrossSize = style.alignContent === 'stretch' ? items.crossSpace + crossSpace / flexLines.length : items.crossSpace;
+        let lineCrossSize = style.alignContent === 'stretch' ? 
+        items.crossSpace + crossSpace / flexLines.length : 
+        items.crossSpace;
 
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
@@ -374,7 +377,7 @@ function layout(element) {
 
             if (align === 'flex-end') {
                 itemStyle[crossEnd]   = crossBase + crossSign * lineCrossSize;
-                itemStyle[crossStart] = itemStyle[crossEnd] + crossSign * itemStyle[crossSize];
+                itemStyle[crossStart] = itemStyle[crossEnd] - crossSign * itemStyle[crossSize];
             }
 
             if (align === 'center') {
@@ -384,12 +387,12 @@ function layout(element) {
 
             if (align === 'stretch') {
                 itemStyle[crossStart] = crossBase;
-                itemStyle[crossEnd]   = crossBase + crossSign * ( itemStyle[crossSize] !== null && itemStyle[crossSize] !== void 0 ? itemStyle[crossSize] : lineCrossSize );
+                itemStyle[crossEnd]   = crossBase + crossSign * ( itemStyle[crossSize] !== null && itemStyle[crossSize] !== (void 0) ? itemStyle[crossSize] : lineCrossSize );
                 itemStyle[crossSize]  = crossSign * (itemStyle[crossEnd] - itemStyle[crossStart]);
             }
         }
 
-        crossBase = crossBase + crossSign * (lineCrossSize + step);
+        crossBase += crossSign * (lineCrossSize + step);
     });
 
     console.log(items);
