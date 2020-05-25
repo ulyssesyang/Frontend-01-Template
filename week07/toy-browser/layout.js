@@ -243,7 +243,7 @@ function layout(element) {
     } else {
         // process each flex line
         flexLines.forEach((items) => {
-            const mainsSpace = items.mainsSpace;
+            const mainSpace = items.mainSpace;
 
             let flexTotal = 0;
             for (let i = 0; i < items.length; i++) {
@@ -264,7 +264,7 @@ function layout(element) {
                     const itemStyle = getStyle(item);
 
                     if (itemStyle.flex) {
-                        itemStyle[mainSize] = (mainsSpace / flexTotal) * itemStyle.flex;
+                        itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
                     }
 
                     itemStyle[mainStart] = currentMain;
@@ -279,19 +279,19 @@ function layout(element) {
                     step = 0;
                 }
                 if (style.justifyContent === 'flex-end') {
-                    currentMain = mainsSpace * mainSign + mainBase;
+                    currentMain = mainSpace * mainSign + mainBase;
                     step = 0;
                 }
                 if (style.justifyContent === 'center') {
-                    currentMain = mainsSpace / 2 * mainSign + mainBase;
+                    currentMain = mainSpace / 2 * mainSign + mainBase;
                     step = 0;
                 }
                 if (style.justifyContent === 'space-between') {
-                    step = mainsSpace / (items.length - 1) * mainSign;
+                    step = mainSpace / (items.length - 1) * mainSign;
                     currentMain = mainBase;
                 }
                 if (style.justifyContent === 'space-around') {
-                    step = mainsSpace / items.length * mainSign;
+                    step = mainSpace / items.length * mainSign;
                     currentMain = step / 2 + mainBase;
                 }
                 
