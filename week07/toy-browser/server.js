@@ -11,6 +11,9 @@ const server = http.createServer((req, res) => {
 <html maaa=a >
 <head>
     <style>
+body {
+    background-color:rgb(0,0,0);
+}
 #container{
     width:500px;
     height:300px;
