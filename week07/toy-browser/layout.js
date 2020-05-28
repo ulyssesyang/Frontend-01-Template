@@ -167,7 +167,7 @@ function layout(element) {
         isAutoMainSize = true;
     }
 
-    const flexLine = [];
+    let flexLine = [];
     const flexLines = [flexLine];
 
     // main/cross axis 剩余空间
@@ -197,9 +197,10 @@ function layout(element) {
             }
 
             if (mainSpace < itemStyle[mainSize]) {
-                flexLine = [item]; //???
-                flexLine.mainSpace = mainSpace;
-                flexLine.crossSpace = crossSpace;
+                flexLine.mainSpace = mainSpace; //???flexLine是否应该为item
+                flexLine.crossSpace = crossSpace;//???flexLine是否应该为item
+
+                flexLine = [item]; //???重新赋的
                 flexLines.push(flexLine);
                 mainSpace = style[mainSize];
                 crossSpace = 0;
