@@ -44,3 +44,32 @@
 - 对dom上的元素进行递归，循环绘制
 
 ## CSS基本语法和机制
+
+### CSS简化版本 - CSS2.1的语法
+
+- [Appendix G. Grammar of CSS 2.1](https://www.w3.org/TR/CSS21/grammar.html)
+- [CSS Syntax Module Level 3](https://www.w3.org/TR/css-syntax-3/)
+
+### CSS总体结构
+
+- @charset
+- @import
+- rules
+  - @media
+  - @page
+  - rule
+
+### CSS @rule
+
+- MDN
+- 手机淘宝的flexible设计与实现
+
+### CSS rule的结构
+
+- Selector
+- Key
+  - properties
+  - variables
+- Value
+
+### CSS知识体系搭建
