@@ -89,3 +89,4 @@ const element = {
 console.log(match("div #id.class", element)); //false
 console.log(match("div #id1.class1", element)); //true
 console.log(match("div #id1.class2", element)); //false
+console.log(match("div #id1", element)); //true
