@@ -67,9 +67,54 @@
 ### CSS rule的结构
 
 - Selector
+  - [Selectors Level 3](https://www.w3.org/TR/selectors-3/)
+  - [Selectors Level 4](https://www.w3.org/TR/selectors-4/)
 - Key
   - properties
-  - variables
-- Value
+  - variables: [CSS Custom Properties for Cascading Variables Module Level 1](https://www.w3.org/TR/css-variables/)
+- Value: [CSS Values and Units Module Level 4](https://www.w3.org/TR/css-values-4/)
 
-### CSS知识体系搭建
+### 从W3C收集CSS标准
+
+- [W3C CSS](https://www.w3.org/TR/?tag=css)
+- 收集标准：
+
+```javascript
+var lis = document.getElementById("container").children
+
+var standards = [];
+
+for(let li of lis) {
+    if(li.getAttribute('data-tag').match(/css/))
+        standards.push({
+            name:li.children[1].innerText,
+            url:li.children[1].children[0].href
+        })
+}
+console.log(standards)
+```
+
+- 收集 CSS 属性相关标准：
+
+```javascript
+let iframe = document.createElement("iframe");
+document.body.innerHTML = "";
+document.body.appendChild(iframe);
+
+function happen(element, event){
+    return new Promise(function(resolve){
+        let handler = () => {
+            resolve();
+            element.removeEventListener(event, handler);
+        }
+        element.addEventListener(event, handler);
+    })
+}
+void async function(){
+    for(let standard of standards) {
+        iframe.src = standard.url;
+        console.log(standard.name);
+        await happen(iframe, "load");
+    }
+}();
+```
