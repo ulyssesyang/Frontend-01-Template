@@ -1,0 +1,61 @@
+<style>
+    #board {
+        width: 350px;
+    }
+    .cell {
+        width: 100px;
+        height: 100px;
+        border: solid 1px white;
+        background-color: green;
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>
+<div id="board"></div>
+<script>
+    const pattern = [[2, 0, 0],[0, 1, 0],[0, 0, 0]];
+
+    let color = 1;
+    const render = () => {
+        let board = document.getElementById('board');
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.innerHTML = 
+                pattern[i][j] === 2 ? '❌' : 
+                pattern[i][j] === 1 ? '⭕️' : 
+                '';
+                cell.addEventListener('click', () => move(j, i));
+                board.appendChild(cell);
+            }
+            board.appendChild(document.createElement('br'));
+        }
+    }
+
+    function move(x, y) {
+        if (pattern[y][x] === 0) {
+            pattern[y][x] = 1;
+        }
+        color = 3 - color;
+        render();
+    }
+
+    function win(x, y) {
+        let res_row = true;
+        let res_col = true;
+        for (let i = 0; i < 3; i++) {
+            if (pattern[x][i] !== pattern[x][y]) {
+                res_row = false;
+            }
+        }
+        for (let j = 0; j < 3; j++) {
+            if (pattern[j][y] !== pattern[x][y]) {
+                res_col = false;
+            }
+        }
+        return res_row || res_col;
+    }
+
+    render();
+</script>

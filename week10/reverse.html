@@ -1,0 +1,34 @@
+<div id="a">
+    <p>1</p>
+    <div>2</div>
+    <a>3</a>
+    <div>4</div>
+    <p>5</p> 
+</div>
+
+<script>
+    const element = document.getElementById('a');
+
+    function reverseChildren1(element) {
+        let l = element.childNodes.length;
+        while (l-- > 0) {
+            // 会有重排
+            element.appendChild(element.childNodes[l]);
+        }
+    }
+
+    function reverseChildren2(element) {
+        let range = new Range();
+        range.selectNodeContents(element);
+
+        let fragment = range.extractContents();
+        let l = fragment.childNodes.length;
+        while (l-- > 0) {
+            // 无重排
+            fragment.appendChild(fragment.childNodes[l]);
+        }
+        element.appendChild(fragment)
+    }
+
+    reverseChildren2(element);
+</script>
