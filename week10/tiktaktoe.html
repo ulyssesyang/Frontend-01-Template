@@ -87,7 +87,7 @@
         const choice = bestChoice(pattern, color);
         console.log(choice);
 
-        if (choice.point) {
+        if (choice.result > 0) {
             const position = choice.point[0] * 3 + choice.point[1] + 1;
             const cell = document.querySelector(`#board div:nth-child(${position})`);
             cell.classList.add('best-choice');
