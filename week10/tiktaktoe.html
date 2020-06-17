@@ -15,7 +15,7 @@
         text-align: center;
     }
 
-    .will-win {
+    .best-choice {
         background: rgba(151, 74, 158, 0.726);
     }
 </style>
@@ -24,16 +24,16 @@
     // set color code for grids: 0/1/2
     // initialize
     let pattern = [
-        [2, 0, 0],
-        [0, 1, 0],
+        [0, 0, 0],
+        [0, 0, 0],
         [0, 0, 0]
     ];
     let color = 1;
 
     function reset() {
         pattern = [
-            [2, 0, 0],
-            [0, 1, 0],
+            [0, 0, 0],
+            [0, 0, 0],
             [0, 0, 0]
         ];
         color = 1;
@@ -55,6 +55,7 @@
                 board.appendChild(cell);
             }
         }
+        showBestChoice(pattern, color);
     }
 
     function move(x, y) {
@@ -66,18 +67,27 @@
             render();
         }
 
+        showBestChoice(pattern, color);
+
         if (check(pattern, pattern[x][y], x, y)) {
             alert(pattern[x][y] === 2 ? '❌ is winner' : '⭕️ is winner');
             // re-initialize game after win
             reset();
             render();
         }
+    }
 
-        willWin(pattern, color);
+    function showBestChoice(pattern, color){
+        const result = bestChoice(pattern, color);
+        console.log(result)
+        if (result.point) {
+            const position = result.point[0] * 3 + result.point[1] + 1;
+            const element = document.querySelector(`#board div:nth-child(${position})`);
+            element.classList.add('best-choice');
+        }
     }
 
     function check(pattern, color, x, y) {
-        console.log(x, y)
         // default is true
         let res_row = true;
         let res_col = true;
@@ -112,8 +122,6 @@
             }
         }
 
-        console.log(res_row, res_col, res_lxs, res_rxs)
-
         // return true if any case matching
         return res_row || res_col || res_lxs || res_rxs;
     }
@@ -125,15 +133,50 @@
                     // temporally assign color code to this empty grid
                     pattern[i][j] = color;
                     if (check(pattern, color, i, j)) {
-                        console.log(color === 2 ? '❌ is winner' : '⭕️ is winner');
-                        const position = i*3 + j + 1; 
-                        const element  = document.querySelector(`#board div:nth-child(${position})`);
-                        element.classList.add('will-win');
+                        // console.log(color === 2 ? '❌ is winner' : '⭕️ is winner');
+                        return [i, j];
                     }
                     // revert back to empty
                     pattern[i][j] = 0;
                 }
             }
+        }
+    }
+
+    function clone(pattern) {
+        return JSON.parse(JSON.stringify(pattern));
+    }
+
+    function bestChoice(pattern, color) {
+        let result = -1;
+        let point = willWin(pattern, color);
+
+        // return result if get willWin scenario
+        if (point) {
+            return {
+                point,
+                result: 1
+            }
+        }
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (pattern[i][j] === 0) {
+                    let tempPattern = clone(pattern);
+                    tempPattern[i][j] = color;
+                    // recursion each grid to get result until each one reach to end
+                    let opponent = bestChoice(tempPattern, 3 - color);
+                    if (-opponent.result >= result) {
+                        point = [i, j];
+                        result = -opponent.result;
+                    }
+                }
+            }
+        }
+
+        return {
+            point,
+            result: point ? result : 0
         }
     }
 
