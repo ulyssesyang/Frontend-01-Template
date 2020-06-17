@@ -14,6 +14,10 @@
         font-size: 50px;
         text-align: center;
     }
+
+    .will-win {
+        background: rgba(151, 74, 158, 0.726);
+    }
 </style>
 <div id="board"></div>
 <script>
@@ -50,7 +54,6 @@
                 cell.addEventListener('click', () => move(i, j));
                 board.appendChild(cell);
             }
-            board.appendChild(document.createElement('br'));
         }
     }
 
@@ -63,15 +66,17 @@
             render();
         }
 
-        if (checkWin(x, y)) {
+        if (check(pattern, pattern[x][y], x, y)) {
             alert(pattern[x][y] === 2 ? '❌ is winner' : '⭕️ is winner');
             // re-initialize game after win
             reset();
             render();
         }
+
+        willWin(pattern, color);
     }
 
-    function checkWin(x, y) {
+    function check(pattern, color, x, y) {
         console.log(x, y)
         // default is true
         let res_row = true;
@@ -80,28 +85,28 @@
         let res_rxs = true;
         // check each row with same x
         for (let i = 0; i < 3; i++) {
-            if (pattern[x][i] !== pattern[x][y]) {
+            if (pattern[x][i] !== color) {
                 res_row = false;
                 break;
             }
         }
         // check each col with same y
         for (let i = 0; i < 3; i++) {
-            if (pattern[i][y] !== pattern[x][y]) {
+            if (pattern[i][y] !== color) {
                 res_col = false;
                 break;
             }
         }
         // check left cross line pattern
         for (let i = 0; i < 3; i++) {
-            if (pattern[i][i] !== pattern[x][y]) {
+            if (pattern[i][i] !== color) {
                 res_lxs = false;
                 break;
             }
         }
         // check right cross line pattern
         for (let i = 0; i < 3; i++) {
-            if (pattern[i][2 - i] !== pattern[x][y]) {
+            if (pattern[i][2 - i] !== color) {
                 res_rxs = false;
                 break;
             }
@@ -111,6 +116,25 @@
 
         // return true if any case matching
         return res_row || res_col || res_lxs || res_rxs;
+    }
+
+    function willWin(pattern, color) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (pattern[i][j] === 0) {
+                    // temporally assign color code to this empty grid
+                    pattern[i][j] = color;
+                    if (check(pattern, color, i, j)) {
+                        console.log(color === 2 ? '❌ is winner' : '⭕️ is winner');
+                        const position = i*3 + j + 1; 
+                        const element  = document.querySelector(`#board div:nth-child(${position})`);
+                        element.classList.add('will-win');
+                    }
+                    // revert back to empty
+                    pattern[i][j] = 0;
+                }
+            }
+        }
     }
 
     render();
