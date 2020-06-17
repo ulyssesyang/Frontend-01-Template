@@ -2,6 +2,7 @@
     #board {
         width: 350px;
     }
+
     .cell {
         width: 100px;
         height: 100px;
@@ -9,24 +10,44 @@
         background-color: green;
         display: inline-block;
         vertical-align: middle;
+        line-height: 100px;
+        font-size: 50px;
+        text-align: center;
     }
 </style>
 <div id="board"></div>
 <script>
-    const pattern = [[2, 0, 0],[0, 1, 0],[0, 0, 0]];
-
+    // set color code for grids: 0/1/2
+    // initialize
+    let pattern = [
+        [2, 0, 0],
+        [0, 1, 0],
+        [0, 0, 0]
+    ];
     let color = 1;
+
+    function reset() {
+        pattern = [
+            [2, 0, 0],
+            [0, 1, 0],
+            [0, 0, 0]
+        ];
+        color = 1;
+    }
+
     const render = () => {
         let board = document.getElementById('board');
+        // refresh board for each render
+        board.innerHTML = '';
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
-                cell.innerHTML = 
-                pattern[i][j] === 2 ? '❌' : 
-                pattern[i][j] === 1 ? '⭕️' : 
-                '';
-                cell.addEventListener('click', () => move(j, i));
+                cell.innerHTML =
+                    pattern[i][j] === 2 ? '❌' :
+                    pattern[i][j] === 1 ? '⭕️' :
+                    '';
+                cell.addEventListener('click', () => move(i, j));
                 board.appendChild(cell);
             }
             board.appendChild(document.createElement('br'));
@@ -34,27 +55,62 @@
     }
 
     function move(x, y) {
-        if (pattern[y][x] === 0) {
-            pattern[y][x] = 1;
+        // only reassign color code if grid is empty
+        if (pattern[x][y] === 0) {
+            pattern[x][y] = color;
+            // reverse color code for next move
+            color = 3 - color;
+            render();
         }
-        color = 3 - color;
-        render();
+
+        if (checkWin(x, y)) {
+            alert(pattern[x][y] === 2 ? '❌ is winner' : '⭕️ is winner');
+            // re-initialize game after win
+            reset();
+            render();
+        }
     }
 
-    function win(x, y) {
+    function checkWin(x, y) {
+        console.log(x, y)
+        // default is true
         let res_row = true;
         let res_col = true;
+        let res_lxs = true;
+        let res_rxs = true;
+        // check each row with same x
         for (let i = 0; i < 3; i++) {
             if (pattern[x][i] !== pattern[x][y]) {
                 res_row = false;
+                break;
             }
         }
-        for (let j = 0; j < 3; j++) {
-            if (pattern[j][y] !== pattern[x][y]) {
+        // check each col with same y
+        for (let i = 0; i < 3; i++) {
+            if (pattern[i][y] !== pattern[x][y]) {
                 res_col = false;
+                break;
             }
         }
-        return res_row || res_col;
+        // check left cross line pattern
+        for (let i = 0; i < 3; i++) {
+            if (pattern[i][i] !== pattern[x][y]) {
+                res_lxs = false;
+                break;
+            }
+        }
+        // check right cross line pattern
+        for (let i = 0; i < 3; i++) {
+            if (pattern[i][2 - i] !== pattern[x][y]) {
+                res_rxs = false;
+                break;
+            }
+        }
+
+        console.log(res_row, res_col, res_lxs, res_rxs)
+
+        // return true if any case matching
+        return res_row || res_col || res_lxs || res_rxs;
     }
 
     render();
