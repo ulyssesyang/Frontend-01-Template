@@ -18,8 +18,14 @@
     .best-choice {
         background: rgba(151, 74, 158, 0.726);
     }
+
+    #guide {
+        color: rgb(151, 74, 158);
+    }
 </style>
 <div id="board"></div>
+<div id='info'></div>
+<div id='guide'>Follow pink cell for best choice</div>
 <script>
     // set color code for grids: 0/1/2
     // initialize
@@ -77,13 +83,29 @@
         }
     }
 
-    function showBestChoice(pattern, color){
-        const result = bestChoice(pattern, color);
-        console.log(result)
-        if (result.point) {
-            const position = result.point[0] * 3 + result.point[1] + 1;
-            const element = document.querySelector(`#board div:nth-child(${position})`);
-            element.classList.add('best-choice');
+    function showBestChoice(pattern, color) {
+        const choice = bestChoice(pattern, color);
+        console.log(choice);
+
+        if (choice.point) {
+            const position = choice.point[0] * 3 + choice.point[1] + 1;
+            const cell = document.querySelector(`#board div:nth-child(${position})`);
+            cell.classList.add('best-choice');
+        }
+
+        const info = document.getElementById('info');
+        const code = color === 2 ? '❌' : '⭕️';
+
+        if (choice.result > 0) {
+            info.textContent = `${code} will win the game`;
+        }
+
+        if (choice.result < 0) {
+            info.textContent = `${code} will lose the game`;
+        }
+
+        if (choice.result == 0) {
+            info.textContent = `This game will be tied`;
         }
     }
 
@@ -130,14 +152,12 @@
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 if (pattern[i][j] === 0) {
-                    // temporally assign color code to this empty grid
-                    pattern[i][j] = color;
-                    if (check(pattern, color, i, j)) {
+                    let tempPattern = clone(pattern);
+                    tempPattern[i][j] = color;
+                    if (check(tempPattern, color, i, j)) {
                         // console.log(color === 2 ? '❌ is winner' : '⭕️ is winner');
                         return [i, j];
                     }
-                    // revert back to empty
-                    pattern[i][j] = 0;
                 }
             }
         }
