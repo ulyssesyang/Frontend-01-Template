@@ -96,4 +96,15 @@ names = filterOut(names, ["SyncManager"]);
 console.log(names.length);
 console.log(names);
 
+// prepare data
+const text   = names.join('\n');
+const blob   = new Blob([text], {type: 'text/plain'});
+const anchor = document.createElement('a');
+
+// simulate download
+anchor.download = 'apis.txt';
+anchor.href = (window.webkitURL || window.URL).createObjectURL(blob);
+anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
+anchor.click();
+
 </script>
