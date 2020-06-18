@@ -57,3 +57,14 @@ range.insertNode(document.createTextNode('aaa'));
   - removeRule
 
 ### window.getComputedStyle(element, pseudoElement)
+
+### window窗口操作
+
+````javascript
+
+const childWindow = window.open('about:blank', '_blank', 'width=100,height=100,left=100,top=100');
+childWindow.moveBy(-50, -50);
+childWindow.scrollBy(0, 30);
+````
+
+## 所有API
