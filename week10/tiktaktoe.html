@@ -36,6 +36,11 @@
     ];
     let color = 1;
 
+    let openings       = new Map();
+    let initialPattern = pattern.toString();
+    let initialChoice  = { point: [1, 1], result: 0};
+    openings.set(initialPattern, initialChoice);
+
     function reset() {
         pattern = [
             [0, 0, 0],
@@ -189,6 +194,10 @@
     }
 
     function bestChoice(pattern, color) {
+        if (openings.has(pattern.toString())) {
+            return openings.get(pattern.toString());
+        }
+
         let result = -1;
         let point = willWin(pattern, color);
 
