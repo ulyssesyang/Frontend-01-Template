@@ -68,3 +68,7 @@ childWindow.scrollBy(0, 30);
 ````
 
 ## 所有API
+
+- 根据window对象，生成所有API
+- 利用[script](./apis.html)，自动生成[apis.txt](./apis.txt)
+- 参考标准，进一步划分，生成[脑图](./apis.xmind)
