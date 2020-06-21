@@ -89,6 +89,7 @@
     }
 
     function computerMove() {
+        console.log('computer move')
         const choice = bestChoice(pattern, color);
         if (choice.point) {
             const x = choice.point[0];
@@ -136,6 +137,7 @@
     }
 
     function check(pattern, color, x, y) {
+        console.log(x, y)
         // default is true
         let res = true;
         // check each row with same x
@@ -147,6 +149,7 @@
         }
         // if true, then directly return, no need to continue
         if (res) {
+            console.log('row true')
             return res;
         }
 
@@ -158,6 +161,7 @@
             }
         }
         if (res) {
+            console.log('col true')
             return res;
         }
 
@@ -175,21 +179,24 @@
             }
         }
         if (res) {
+            console.log('left cross true')
             return res;
         }
 
         // check right cross line pattern
         for (let i = 0; i < 3; i++) {
             if (pattern[i][2 - i] !== color) {
-                res_rxs = false;
+                res = false;
                 break;
             }
         }
         if (res) {
+            console.log('right cross true')
             return res;
         }
 
         // return false if any pattern not matching
+        console.log('no match')
         return false;
     }
 
