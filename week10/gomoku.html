@@ -1,6 +1,6 @@
 <style>
     #board {
-        width: 350px;
+        width: calc(100*5px + 50px);
     }
 
     .cell {
@@ -33,19 +33,22 @@
 
     // set color code for grids: 0/1/2
     // initialize
-    let pattern = createGrid(3);
-    let color = 1;
+    let size    = 5;
+    let pattern = createGrid(size);
+    let color   = 1;
+    // control recursion level
+    let level   = 5;
 
     let openings = new Map();
     let initialPattern = pattern.toString();
     let initialChoice = {
-        point: [1, 1],
+        point: [2, 2],
         result: 0
     };
     openings.set(initialPattern, initialChoice);
 
     function reset() {
-        pattern = createGrid(3);
+        pattern = createGrid(size);
         color = 1;
     }
 
@@ -53,13 +56,13 @@
         let board = document.getElementById('board');
         // refresh board for each render
         board.innerHTML = '';
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
                 cell.innerHTML =
-                    pattern[i][j] === 2 ? '❌' :
-                    pattern[i][j] === 1 ? '⭕️' :
+                    pattern[i][j] === 2 ? '⚪' :
+                    pattern[i][j] === 1 ? '⚫' :
                     '';
                 cell.addEventListener('click', () => userMove(i, j));
                 board.appendChild(cell);
@@ -78,7 +81,7 @@
         }
 
         if (check(pattern, pattern[x][y], x, y)) {
-            alert(pattern[x][y] === 2 ? '❌ is winner' : '⭕️ is winner');
+            alert(pattern[x][y] === 2 ? '⚪ is winner' : '⚫ is winner');
             // re-initialize game after win
             reset();
             render();
@@ -88,7 +91,7 @@
     }
 
     function computerMove() {
-        const choice = bestChoice(pattern, color);
+        const choice = bestChoice(pattern, color, level);
         if (choice.point) {
             const x = choice.point[0];
             const y = choice.point[1];
@@ -100,7 +103,7 @@
             showBestChoice(pattern, color);
 
             if (check(pattern, pattern[x][y], x, y)) {
-                alert(pattern[x][y] === 2 ? '❌ is winner' : '⭕️ is winner');
+                alert(pattern[x][y] === 2 ? '⚪ is winner' : '⚫ is winner');
                 // re-initialize game after win
                 reset();
                 render();
@@ -109,17 +112,17 @@
     }
 
     function showBestChoice(pattern, color) {
-        const choice = bestChoice(pattern, color);
+        const choice = bestChoice(pattern, color, level);
         console.log(choice);
 
         if (choice.result !== -1 && choice.point) {
-            const position = choice.point[0] * 3 + choice.point[1] + 1;
+            const position = choice.point[0] * size + choice.point[1] + 1;
             const cell = document.querySelector(`#board div:nth-child(${position})`);
             cell.classList.add('best-choice');
         }
 
         const info = document.getElementById('info');
-        const code = color === 2 ? '❌' : '⭕️';
+        const code = color === 2 ? '⚪' : '⚫';
 
         if (choice.result > 0) {
             info.textContent = `${code} will win the game`;
@@ -141,7 +144,7 @@
         let res_lxs = true;
         let res_rxs = true;
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < size; i++) {
             // check each row with same x
             if (pattern[x][i] !== color) {
                 res_row = false;
@@ -155,7 +158,7 @@
                 res_lxs = false;
             }
             // check right cross line pattern
-            if (pattern[i][2 - i] !== color) {
+            if (pattern[i][size - 1 - i] !== color) {
                 res_rxs = false;
             }
         }
@@ -165,13 +168,13 @@
     }
 
     function willWin(pattern, color) {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
                 if (pattern[i][j] === 0) {
                     let tempPattern = clone(pattern);
                     tempPattern[i][j] = color;
                     if (check(tempPattern, color, i, j)) {
-                        // console.log(color === 2 ? '❌ is winner' : '⭕️ is winner');
+                        // console.log(color === 2 ? '⚪ is winner' : '⚫ is winner');
                         return [i, j];
                     }
                 }
@@ -183,13 +186,24 @@
         return JSON.parse(JSON.stringify(pattern));
     }
 
-    function bestChoice(pattern, color) {
+    function bestChoice(pattern, color, level) {
         if (openings.has(pattern.toString())) {
             return openings.get(pattern.toString());
         }
 
+        console.log(level);
+        level --;
+
         let result = -1;
         let point = willWin(pattern, color);
+
+        // recursion call depth restricts to level number
+        if (level <= 1) {
+            return {
+                point,
+                result: point ? result : 0
+            }
+        }
 
         // return result if get willWin scenario
         if (point) {
@@ -199,13 +213,13 @@
             }
         }
 
-        outer: for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
+        outer: for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
                 if (pattern[i][j] === 0) {
                     let tempPattern = clone(pattern);
                     tempPattern[i][j] = color;
                     // recursion each grid to get result until each one reach to end
-                    let opponent = bestChoice(tempPattern, 3 - color);
+                    let opponent = bestChoice(tempPattern, 3 - color, level);
                     if (-opponent.result >= result) {
                         point = [i, j];
                         result = -opponent.result;
