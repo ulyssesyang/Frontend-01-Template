@@ -137,60 +137,32 @@
 
     function check(pattern, color, x, y) {
         // default is true
-        let res = true;
-        // check each row with same x
+        let res_row = true;
+        let res_col = true;
+        let res_lxs = true;
+        let res_rxs = true;
+        
         for (let i = 0; i < 3; i++) {
+            // check each row with same x
             if (pattern[x][i] !== color) {
-                res = false;
-                break;
+                res_row = false;
             }
-        }
-        // if true, then directly return, no need to continue
-        if (res) {
-            return res;
-        }
-
-        // check each col with same y
-        for (let i = 0; i < 3; i++) {
+            // check each col with same y
             if (pattern[i][y] !== color) {
-                res = false;
-                break;
+                res_col = false;
             }
-        }
-        if (res) {
-            return res;
-        }
-
-        // only need to check if cell is on the cross line
-        if (x !== y) {
-            // if not, no need to check cross line pattern
-            return false;
-        }
-
-        // check left cross line pattern
-        for (let i = 0; i < 3; i++) {
+            // check left cross line pattern
             if (pattern[i][i] !== color) {
-                res = false;
-                break;
+                res_lxs = false; 
             }
-        }
-        if (res) {
-            return res;
-        }
-
-        // check right cross line pattern
-        for (let i = 0; i < 3; i++) {
+            // check right cross line pattern
             if (pattern[i][2 - i] !== color) {
-                res = false;
-                break;
+                res_rxs = false;
             }
         }
-        if (res) {
-            return res;
-        }
 
-        // return false if any pattern not matching
-        return false;
+        // return true if any case matching
+        return res_row || res_col || res_lxs || res_rxs;
     }
 
     function willWin(pattern, color) {
