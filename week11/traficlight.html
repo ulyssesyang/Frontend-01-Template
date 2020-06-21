@@ -1,0 +1,38 @@
+<style>
+    div {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: gray;
+    }
+    .red {
+        background: red;
+    }
+    .yellow {
+        background: yellow;
+    }
+    .green {
+        background: green;
+    }
+</style>
+<div id="traffic-light">
+    <div class="red"></div>
+    <div class="yellow"></div>
+    <div class="green"></div>
+</div>
+<script>
+    function sleep(delay) {
+        return new Promise(() => setTimeout(()=>{}, delay));
+    }
+
+    function turnLight(name) {
+        const element = document.getElementsByTagName('div');
+
+    }
+
+    async function render(params) {
+        await sleep(1000 * 10);
+    }
+
+    render();
+</script>
