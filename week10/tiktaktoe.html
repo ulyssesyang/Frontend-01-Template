@@ -89,7 +89,6 @@
     }
 
     function computerMove() {
-        console.log('computer move')
         const choice = bestChoice(pattern, color);
         if (choice.point) {
             const x = choice.point[0];
@@ -137,7 +136,6 @@
     }
 
     function check(pattern, color, x, y) {
-        console.log(x, y)
         // default is true
         let res = true;
         // check each row with same x
@@ -149,7 +147,6 @@
         }
         // if true, then directly return, no need to continue
         if (res) {
-            console.log('row true')
             return res;
         }
 
@@ -161,14 +158,13 @@
             }
         }
         if (res) {
-            console.log('col true')
             return res;
         }
 
-        // only need to check if cell is in the middle
+        // only need to check if cell is on the cross line
         if (x !== y) {
-            // if false, then return false and no need to check cross line pattern
-            return !res;
+            // if not, no need to check cross line pattern
+            return false;
         }
 
         // check left cross line pattern
@@ -179,7 +175,6 @@
             }
         }
         if (res) {
-            console.log('left cross true')
             return res;
         }
 
@@ -191,12 +186,10 @@
             }
         }
         if (res) {
-            console.log('right cross true')
             return res;
         }
 
         // return false if any pattern not matching
-        console.log('no match')
         return false;
     }
 
