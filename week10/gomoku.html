@@ -1,17 +1,17 @@
 <style>
     #board {
-        width: calc(100*5px + 50px);
+        width: calc(10*50px + 25px);
     }
 
     .cell {
-        width: 100px;
-        height: 100px;
+        width: 50px;
+        height: 50px;
         border: solid 1px white;
         background-color: green;
         display: inline-block;
         vertical-align: middle;
-        line-height: 100px;
-        font-size: 50px;
+        line-height: 50px;
+        font-size: 25px;
         text-align: center;
     }
 
@@ -33,16 +33,16 @@
 
     // set color code for grids: 0/1/2
     // initialize
-    let size    = 5;
+    let size    = 10;
     let pattern = createGrid(size);
     let color   = 1;
     // control recursion level
-    let level   = 5;
+    let level   = 10;
 
     let openings = new Map();
     let initialPattern = pattern.toString();
     let initialChoice = {
-        point: [2, 2],
+        point: [4, 4],
         result: 0
     };
     openings.set(initialPattern, initialChoice);
@@ -198,7 +198,7 @@
         let point = willWin(pattern, color);
 
         // recursion call depth restricts to level number
-        if (level <= 1) {
+        if (level <= 4) {
             return {
                 point,
                 result: point ? result : 0
