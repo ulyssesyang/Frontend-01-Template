@@ -13,8 +13,11 @@
         width: 701px;
     }
 </style>
+
 <div id="container"></div>
 <button onclick="localStorage.map = JSON.stringify(map)">Save</button>
+<button onclick="localStorage.removeItem('map');location.reload();">Clear</button>
+
 <script>
     const map = localStorage.map ? JSON.parse(localStorage.map) : new Array(100 * 100).fill(0);
     const container = document.getElementById('container');
@@ -40,8 +43,8 @@
     }
 
     function render() {
-        for (let x = 0; x < 100; x++) {
-            for (let y = 0; y < 100; y++) {
+        for (let y = 0; y < 100; y++) {
+            for (let x = 0; x < 100; x++) {
                 const cell = document.createElement('div');
                 cell.classList.add('cell');
 
@@ -70,29 +73,66 @@
     render();
 
     async function findPath(map, start, end) {
+        // initialize lookups
         const cloneMap = map.slice();
-        const queue = [start];
+        const lookups = [start];
 
-        async function insert(x, y) {
-            if (cloneMap[100 * y + x] !== 0 || x < 0 || y < 0 || x >= 100 || y >= 100) {
+        async function insert(x, y, pre) {
+            // check boundary
+            if (x < 0 || y < 0 || x >= 100 || y >= 100) {
                 return;
             }
-            cloneMap[100 * y + x] = 2;
+            // path must be empty and also inside of map
+            if (cloneMap[100 * y + x]) {
+                return;
+            }
+
+            // mark cell as visited
+            // add color to path
+            await sleep(1);
             container.children[y * 100 + x].style.backgroundColor = 'lightgreen';
-            await sleep(5);
-            queue.push(x, y);
+            cloneMap[100 * y + x] = pre;
+
+            // save path position
+            lookups.push([x, y]);
         }
 
-        while (queue.length) {
-            const [x, y] = queue.shift();
+        while (lookups.length) {
+
+            // use queue data structure
+            // BFS
+            // first in, first out
+            let [x, y] = lookups.shift();
+
+            // use stack data structure
+            // DFS
+            // first in, last out
+            // const [x, y] = lookups.pop();
+
+            // return if find the target position
             if (x === end[0] && y === end[1]) {
-                return true;
+                let path = [];
+                while(x !== start[0] || y !== start[1]) {
+                    path.push([x, y]);
+                    container.children[y * 100 + x].style.backgroundColor = 'pink';
+                    [x, y] = cloneMap[y * 100 + x];
+                }
+                return path;
             }
-            await insert(x - 1, y);
-            await insert(x + 1, y);
-            await insert(x, y - 1);
-            await insert(x, y + 1);
+
+            // incrementing by x and y
+            const pre = [x, y];
+            await insert(x - 1, y, pre);
+            await insert(x + 1, y, pre);
+            await insert(x, y - 1, pre);
+            await insert(x, y + 1, pre);
+
+            await insert(x - 1, y - 1, pre);
+            await insert(x + 1, y - 1, pre);
+            await insert(x - 1, y + 1, pre);
+            await insert(x + 1, y + 1, pre);
         }
-        return false;
+
+        return null;
     }
 </script>
