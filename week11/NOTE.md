@@ -1,1 +1,16 @@
-# 每周总结可以写在这里
+# 编程训练
+
+## 异步编程
+
+### [红绿灯问题](traffic-light.html)
+
+要求：按照绿灯亮10秒，黄灯亮2秒，红灯亮5秒的顺序，无限循环
+实现方案有：
+
+- setTimeout
+- promise
+- async/await
+- generator
+
+### [寻路问题](path-finder.html)
+

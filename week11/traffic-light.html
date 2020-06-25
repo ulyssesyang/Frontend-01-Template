@@ -1,0 +1,127 @@
+<style>
+    div {
+        background-color: grey;
+        display: inline-block;
+        height: 100px;
+        width: 100px;
+        border-radius: 50%;
+        margin: 30px;
+    }
+    #green.on {
+        background-color: green;
+    }
+    #yellow.on {
+        background-color: yellow;
+    }
+    #red.on {
+        background-color: red;
+    }
+</style>
+
+<div id="green"></div>
+<div id="yellow"></div>
+<div id="red"></div>
+
+<button id="next">Next</button>
+
+<script>
+    function turnOn(name) {
+        const lightElements = document.getElementsByTagName('div');
+        for (let i = 0; i < lightElements.length; i++) {
+            lightElements[i].classList.remove('on');
+        }
+        document.getElementById(name).classList.add('on');
+    }
+
+    // use setTimeout
+    function render1() {
+        turnOn('green');
+        setTimeout(() => {
+            turnOn('yellow');
+            setTimeout(() => {
+                turnOn('red');
+                setTimeout(() => {
+                    render1();
+                }, 1000);
+            }, 1000);
+        },1000)
+    }
+    // render1();
+
+    
+    function sleep(delay) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, delay);
+        });
+    }
+    
+    // use promise
+    function render2() {
+        turnOn('green');
+        sleep(1000).then(() => {
+            turnOn('yellow');
+            return sleep(1000);
+        }).then(() => {
+            turnOn('red');
+            return sleep(1000);
+        }).then(render2);
+    }
+    // render2();
+
+    // use async await
+    async function render3() {
+        while (true) {
+            turnOn('green');
+            await sleep(1000);
+            turnOn('yellow');
+            await sleep(1000);
+            turnOn('red');
+            await sleep(1000);
+        }
+    }
+    // render3();
+
+    // use generator
+    function* render4() {
+        while (true) {
+            turnOn('green');
+            yield sleep(1000);
+            turnOn('yellow');
+            yield sleep(1000);
+            turnOn('red');
+            yield sleep(1000);
+        }
+    }
+    function co(iterator) {
+        let {value, done} = iterator.next();
+        if (done) {
+            return;
+        }
+
+        value.then(() => {
+            co(iterator);
+        })
+    }
+    co(render4());
+
+    // use event listener to control light
+    function trigger(name, eventName) {
+        return new Promise((resolve, reject) => {
+            document.getElementById(name).addEventListener(eventName, resolve, {once: true});
+        });
+    }
+    async function render5() {
+        while (true) {
+            turnOn('green');
+            await trigger('next', 'click');
+            turnOn('yellow');
+            await trigger('next', 'click');
+            turnOn('red');
+            await trigger('next', 'click');
+        }
+    }
+    // render5();
+
+</script>
