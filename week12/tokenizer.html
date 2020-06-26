@@ -1,0 +1,142 @@
+<script>
+    const re = /([0-9\.]+)|([ ]+)|([\n\r]+)|(\+)|(\-)|(\*)|(\/)/g;
+
+    const dictionary = ['Number', 'Whitespace', 'LineTerminator', '+', '-', '*', '/'];
+
+    function* tokenize(source) {
+        let result = null;
+        let lastIndex = 0;
+
+        while(true) {
+            lastIndex = re.lastIndex;
+            result = re.exec(source);
+            if (!result) {
+                break;
+            }
+
+            if (re.lastIndex - lastIndex > result[0].length) {
+                throw new Error(`Unexpected token: ${source.slice(lastIndex, re.lastIndex - result[0].length)}`);
+            }
+
+            const token = {
+                type: null,
+                value: null,
+            }
+
+            for (let i = 0; i < dictionary.length; i++) {
+                if (result[i + 1]) {
+                    token.type = dictionary[i];
+                }
+            }
+
+            token.value = result[0];
+
+            yield token;
+        }
+
+        yield { type: 'EOF'}
+    }
+
+    function Expression(source) {
+        if (source[0].type === 'AddictiveExpression' && source[1].type === 'EOF') {
+            let node = {
+                type: 'Expression',
+                children: [source.shift(), source.shift()]
+            }
+            source.unshift(node);
+            return node;
+        }
+
+        AddictiveExpression(source);
+        return Expression(source);
+    }
+
+    function AddictiveExpression(source) {
+        if (source[0].type === 'Number') {
+            MultiplicativeExpression(source);
+            return AddictiveExpression(source);
+        }
+
+        if (source[0].type === 'MultiplicativeExpression') {
+            let node = {
+                type: 'MultiplicativeExpression',
+                children: [source.shift()]
+            }
+            source.unshift(node);
+            return AddictiveExpression(source);
+        }
+
+        if (source[0].type === 'AdditiveExpression' && source.length > 1 && source[1].type === '+') {
+            let node = {
+                type: 'AddictiveExpression',
+                children: [source.shift(), source.shift()]
+            }
+            MultiplicativeExpression(source);
+            node.children.push(source.unshift());
+            source.unshift(node);
+            return AddictiveExpression(source);
+        }
+
+        if (source[0].type === 'AdditiveExpression' && source.length > 1 && source[1].type === '-') {
+            let node = {
+                type: 'AddictiveExpression',
+                children: [source.shift(), source.shift()]
+            }
+            MultiplicativeExpression(source);
+            node.children.push(source.unshift());
+            source.unshift(node);
+            return AddictiveExpression(source);
+        }
+
+        if (source[0].type === 'AddictiveExpression') {
+            return source[0];
+        }
+
+        throw new Error('Unexpected token');
+    }
+
+    function MultiplicativeExpression(source) {
+        console.log(source);
+        if (source[0].type === 'Number') {
+            let node = {
+                type: 'MultiplicativeExpression',
+                children: source.shift()
+            }
+            source.unshift(node);
+            return MultiplicativeExpression(source);
+        }
+
+        if (source[0].type === 'MultiplicativeExpression' && source.length > 1 && source[1].type === '*') {
+            let node = {
+                type: 'MultiplicativeExpression',
+                children: [source.shift(), source.shift(), source.shift()]
+            }
+            source.unshift(node);
+            return MultiplicativeExpression(source);
+        }
+
+        if (source[0].type === 'MultiplicativeExpression' && source.length > 1 && source[1].type === '/') {
+            let node = {
+                type: 'MultiplicativeExpression',
+                children: [source.shift(), source.shift(), source.shift()]
+            }
+            source.unshift(node);
+            return MultiplicativeExpression(source);
+        }
+
+        if (source[0].type === 'MultiplicativeExpression') {
+            return source[0];
+        }
+
+        throw new Error('Unexpected token');
+    }
+
+    const source = [];
+
+    for (const token of tokenize('10 + 11 * 12')) {
+        if (token.type !== 'Whitespace' && token.type !== 'LineTerminator') {
+            source.push(token);
+            console.log(token);
+        }
+    }
+</script>

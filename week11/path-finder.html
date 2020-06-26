@@ -17,10 +17,48 @@
 <div id="container"></div>
 <button onclick="localStorage.map = JSON.stringify(map)">Save</button>
 <button onclick="localStorage.removeItem('map');location.reload();">Clear</button>
+<button onclick="findPath(map, start, end)">Find Path</button>
 
 <script>
-    const map = localStorage.map ? JSON.parse(localStorage.map) : new Array(100 * 100).fill(0);
+    class Sorted {
+        constructor(data, compare) {
+            this.data = data;
+            this.compare = compare;
+        }
+
+        get length() {
+            return this.data.length;
+        }
+
+        take() {
+            if (!this.data.length) {
+                return;
+            }
+            let min = this.data[0];
+            let minIndex = 0;
+            for (let i = 0; i < this.data.length; i++) {
+                if (this.compare(this.data[i], min) < 0) {
+                    min = this.data[i];
+                    minIndex = i;
+                }
+            }
+            this.data[minIndex] = this.data[this.data.length - 1];
+            this.data.pop();
+            return min;
+        }
+
+        insert(v) {
+            this.data.push(v);
+        }
+    }
+
+    // initialize map and container element
+    const map       = localStorage.map ? JSON.parse(localStorage.map) : new Array(100 * 100).fill(0);
     const container = document.getElementById('container');
+
+    // initialize default start and end point
+    const start     = [0, 0];
+    const end       = [50, 50];
 
     // add global listener for tracking mouse click
     let mouse = false;
@@ -69,13 +107,25 @@
                 container.appendChild(cell);
             }
         }
+
+        container.children[start[1] * 100 + start[0]].style.backgroundColor = 'green';
+        container.children[end[1] * 100 + end[0]].style.backgroundColor = 'red';
     }
     render();
+
+    function distance([x, y]) {
+        return (x - end[0]) ** 2 + (y - end[1]) ** 2;
+    }
 
     async function findPath(map, start, end) {
         // initialize lookups
         const cloneMap = map.slice();
-        const lookups = [start];
+
+        // naive solution by using just array to hold data
+        // const lookups = [start];
+
+        // using sorted array by distance
+        let lookups = new Sorted([start], (a, b) => distance(a) - distance(b));
 
         async function insert(x, y, pre) {
             // check boundary
@@ -94,7 +144,8 @@
             cloneMap[100 * y + x] = pre;
 
             // save path position
-            lookups.push([x, y]);
+            // lookups.push([x, y]);
+            lookups.insert([x, y]);
         }
 
         while (lookups.length) {
@@ -102,7 +153,8 @@
             // use queue data structure
             // BFS
             // first in, first out
-            let [x, y] = lookups.shift();
+            // let [x, y] = lookups.shift();
+            let [x, y] = lookups.take();
 
             // use stack data structure
             // DFS
