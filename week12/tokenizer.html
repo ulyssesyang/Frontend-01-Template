@@ -38,7 +38,7 @@
     }
 
     function Expression(source) {
-        if (source[0].type === 'AddictiveExpression' && source[1].type === 'EOF') {
+        if (source[0].type === 'AddictiveExpression' && source[1] && source[1].type === 'EOF') {
             let node = {
                 type: 'Expression',
                 children: [source.shift(), source.shift()]
@@ -52,23 +52,19 @@
     }
 
     function AddictiveExpression(source) {
-        if (source[0].type === 'Number') {
-            MultiplicativeExpression(source);
-            return AddictiveExpression(source);
-        }
-
         if (source[0].type === 'MultiplicativeExpression') {
             let node = {
-                type: 'MultiplicativeExpression',
-                children: [source.shift()]
+                type: 'AddictiveExpression',
+                children: [source[0]]
             }
-            source.unshift(node);
+            source[0] = node;
             return AddictiveExpression(source);
         }
 
-        if (source[0].type === 'AdditiveExpression' && source.length > 1 && source[1].type === '+') {
+        if (source[0].type === 'AdditiveExpression' && source[1] && source[1].type === '+') {
             let node = {
                 type: 'AddictiveExpression',
+                operator: '+',
                 children: [source.shift(), source.shift()]
             }
             MultiplicativeExpression(source);
@@ -77,9 +73,10 @@
             return AddictiveExpression(source);
         }
 
-        if (source[0].type === 'AdditiveExpression' && source.length > 1 && source[1].type === '-') {
+        if (source[0].type === 'AdditiveExpression' && source[1] && source[1].type === '-') {
             let node = {
                 type: 'AddictiveExpression',
+                operator: '-',
                 children: [source.shift(), source.shift()]
             }
             MultiplicativeExpression(source);
@@ -92,23 +89,24 @@
             return source[0];
         }
 
-        throw new Error('Unexpected token');
+        MultiplicativeExpression(source);
+        return AddictiveExpression(source);
     }
 
     function MultiplicativeExpression(source) {
-        console.log(source);
         if (source[0].type === 'Number') {
             let node = {
                 type: 'MultiplicativeExpression',
-                children: source.shift()
+                children: [source[0]]
             }
-            source.unshift(node);
+            source[0] = node;
             return MultiplicativeExpression(source);
         }
 
         if (source[0].type === 'MultiplicativeExpression' && source.length > 1 && source[1].type === '*') {
             let node = {
                 type: 'MultiplicativeExpression',
+                operator: '*',
                 children: [source.shift(), source.shift(), source.shift()]
             }
             source.unshift(node);
@@ -118,6 +116,7 @@
         if (source[0].type === 'MultiplicativeExpression' && source.length > 1 && source[1].type === '/') {
             let node = {
                 type: 'MultiplicativeExpression',
+                operator: '/',
                 children: [source.shift(), source.shift(), source.shift()]
             }
             source.unshift(node);
@@ -128,7 +127,7 @@
             return source[0];
         }
 
-        throw new Error('Unexpected token');
+        return MultiplicativeExpression(source);
     }
 
     const source = [];
@@ -136,7 +135,8 @@
     for (const token of tokenize('10 + 11 * 12')) {
         if (token.type !== 'Whitespace' && token.type !== 'LineTerminator') {
             source.push(token);
-            console.log(token);
         }
     }
+
+    console.log(Expression(source));
 </script>
