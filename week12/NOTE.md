@@ -10,7 +10,12 @@
 
 ### [KMP](KMP.html)
 
-- 长字符串中找子串，O(M+N)
+- Fast Pattern Matching in Strings (by Knuth-Morris-Pratt, SIAM, 1977)
+- 长字符串中找子串，DNA pattern matching
+- time complexity: O(M+N)
+- Two Stages:
+  - Pre-processing: table building O(M)
+  - Matching: O(N)
 
 ### [WildCard通配符算法](wildcard.html)
 
