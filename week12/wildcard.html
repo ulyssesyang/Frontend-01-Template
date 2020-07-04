@@ -35,7 +35,11 @@
             }
             let re = new RegExp(subPattern.replace(/\?/g, '[\\s\\S'), 'g');
             re.lastIndex = lastIndex;
-            re.exec(source);
+
+            if (!re.exec(source)) {
+                return false;
+            }
+            
             lastIndex = re.lastIndex;
         }
 
