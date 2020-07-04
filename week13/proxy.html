@@ -77,13 +77,17 @@
     });
 
     // 把proxy对象值进行监听
+    // 由于对proxy对象进行了获取get
+    // 从而对usedReactivities进行跟新
     effect(() => {
-        // 由于对proxy对象进行了获取get
-        // 从而对usedReactivities进行跟新
+        v1 = p1.a;
+    })
+    effect(() => {
+        v2 = p2.a;
+    })
+    effect(() => {
         v12 = p1.a + p2.a;
     })
-    effect(() => v1 = p1.a)
-    effect(() => v2 = p2.a)
 
     console.log(v12, v1, v2);
     p1.a = 3;
