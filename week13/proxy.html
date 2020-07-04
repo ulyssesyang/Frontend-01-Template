@@ -5,6 +5,8 @@
     <input id='b' type="range" min=0 max=255 />
 </div>
 
+<div id="text">Hello {{name}}</div>
+
 <script>
     // 全局变量
     // 维护handlers
@@ -122,5 +124,15 @@
 
     effect(() => {
         document.getElementById('color').style.backgroundColor = `rgb(${p.r}, ${p.g}, ${p.b})`;
+    })
+
+    let textEl = document.getElementById('text')
+    let range = document.createRange();
+    range.setStart(textEl.childNodes[0], 6)
+    range.setEnd(textEl.childNodes[0], 14)
+    let data = reactive({text: 'world'});
+    effect(() => {
+        range.extractContents()
+        range.insertNode(document.createTextNode(data.text))
     })
 </script>
