@@ -217,6 +217,10 @@ Note: even if selected: !null, then giving oldval.setAttribute is not a function
 
  可以不用Object.defineProperties来定义对象
 
+### 对proxy对象进行恢复 Revocable Proxy
+
+Proxy对象可以通过`revocable()`方法，对对象进行恢复，并对proxy的操作关闭。
+
 ### 参考
 
 -[Brendan Eich: Proxies are Awesome](https://www.youtube.com/watch?v=sClk6aB_CPk)
@@ -224,4 +228,27 @@ Note: even if selected: !null, then giving oldval.setAttribute is not a function
 
 ## [Range编程示例](./draggable.html)
 
-## 组件化概念
+## 前端组件化
+
+组件化概念是基于常用的代码复用和功能属性的封装。
+
+### 概念
+
+相对于后端组件化的难点，web components需要解决不同语言体系，涵盖了UI视觉、数据、业务三大方面的逻辑。总的来说，可以分三大技术方法：
+
+- Custom elements
+- Shadow DOM
+- HTML templates
+
+### 结构特征
+
+除了普通对象属性外，组件还有有一些特殊属性特征
+
+- properties
+- methods
+- inherit
+- attribute
+- config & state
+- event
+- lifecycle
+- children
