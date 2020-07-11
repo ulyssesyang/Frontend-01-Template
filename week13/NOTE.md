@@ -252,3 +252,44 @@ Proxy对象可以通过`revocable()`方法，对对象进行恢复，并对proxy
 - event
 - lifecycle
 - children
+
+### 常见component的代码结构
+
+````JS
+class MyComponent {
+        constructor(config) {
+
+        }
+        get prop1() {
+
+        }
+
+        set prop1() {
+
+        }
+
+        setAtrribute(attr) {
+
+        }
+
+        getAttribute(attr, value) {
+        }
+
+        get children() {
+
+        }
+
+        set children() {
+
+        }
+
+        mounted() {
+
+        }
+
+        render() {
+        }
+    }
+
+    let myComponent = new MyComponent();
+````
