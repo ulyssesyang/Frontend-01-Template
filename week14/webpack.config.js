@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './main.js',
+  entry: './MyCarousel/main.js',
   module: {
     rules: [{
       test: /\.js$/,
