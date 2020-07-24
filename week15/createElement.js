@@ -1,10 +1,6 @@
 export function createElement(Cls, attributes, ...children) {
     let element;
 
-    if (!Cls) {
-        return;
-    }
-
     if (typeof Cls === 'string') {
         element = new Wrapper(Cls);
     } else {
@@ -15,7 +11,18 @@ export function createElement(Cls, attributes, ...children) {
         element.setAttribute(name, attributes[name])
     }
 
-    navigate(children, element);
+    for (const child of children) {
+        if (child instanceof Array) {
+            navigate(child, element);
+            continue;
+        }
+
+        if (typeof child === 'string') {
+            child = new Text(child);
+        }
+
+        element.appendChild(child);
+    }
 
     return element;
 }
@@ -35,7 +42,18 @@ function navigate(children, element) {
     }
 }
 
-class Wrapper {
+export class Text {
+    constructor(text) {
+        this.children = [];
+        this.root = document.createTextNode(text);
+    }
+
+    mountTo(parent) {
+        parent.appendChild(this.root)
+    }
+}
+
+export class Wrapper {
     constructor(type) {
         this.children = [];
         this.root = document.createElement(type);
@@ -43,10 +61,6 @@ class Wrapper {
 
     setAttribute(name, value) {
         this.root.setAttribute(name, value);
-    }
-
-    appendChild(child) {
-        this.children.push(child)
     }
 
     addEventListener() {
@@ -59,6 +73,10 @@ class Wrapper {
 
     get style() {
         return this.root.style;
+    }
+
+    appendChild(child) {
+        this.children.push(child)
     }
 
     mountTo(parent) {

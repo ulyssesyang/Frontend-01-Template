@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img />
+        <div>test</div>
     </div>
 </template>
 <script>

@@ -28,16 +28,16 @@ module.exports = function (source, map) {
             attrs[attribute.name] = attribute.value;
         }
 
-        let children = node.children.map(node => node && visit(node));
+        let children = node.children.map(node => visit(node));
         return `createElement("${node.tagName}", ${JSON.stringify(attrs)}, ${children})`
     }
 
     // console.log('template:',template)
 
-    visit(template);
+    // visit(template);
 
     let component = `
-        import {createElement} from "./createElement";
+        import {createElement, Wrapper, Text} from "./createElement";
 
         export class Carousel {
             setAttribute(name, value) {

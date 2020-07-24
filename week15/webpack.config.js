@@ -1,5 +1,6 @@
 module.exports = {
-  entry: './main.js',
+  // entry: './main_SFC.js',
+  entry: './main_animation.js',
   module: {
     rules: [{
         test: /\.js$/,
