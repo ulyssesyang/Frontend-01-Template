@@ -32,4 +32,15 @@
         console.log('trigger pan move event !!!!!!',event.detail)
         element.style.transform = `translate(${x + event.detail.clientX - event.detail.startX}px, ${y + event.detail.clientY - event.detail.startY}px)`
     })
+
+    document.body.addEventListener('pan-end', event => {
+        console.log('trigger pan end event !!!!!!',event.detail)
+        element.style.transform = `translate(${x}px, ${y}px)`
+    })
+
+    document.body.addEventListener('flick', event => {
+        console.log('trigger flick event !!!!!!',event.detail)
+        element.style.transition = `ease 5s`;
+        element.style.transform = `translate(${x + event.detail.clientX - event.detail.startX}px, ${y + event.detail.clientY - event.detail.startY}px)`
+    })
 </script>
