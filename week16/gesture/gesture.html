@@ -1,0 +1,35 @@
+<head>
+    <style>
+        #el {
+            width: 100px;
+            height: 100px;
+            background-color: skyblue;
+            transform: translate(0px, 0px);
+        }
+    </style>
+</head>
+<body>
+    <div id="el"></div>
+</body>
+<script src="./gesture.js"></script>
+<script>
+    // turn off system default behavior
+    window.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('selectstart', event => event.preventDefault());
+    document.addEventListener('touchmove', event => event.preventDefault(), {passive: false});
+
+    let x = 0;
+    let y = 0;
+    let element = document.getElementById('el');
+
+    enableGesture(document.body);
+
+    document.body.addEventListener('tap', event => {
+        console.log('trigger tap event !!!!!!')
+    })
+
+    document.body.addEventListener('pan-move', event => {
+        console.log('trigger pan move event !!!!!!',event.detail)
+        element.style.transform = `translate(${x + event.detail.clientX - event.detail.startX}px, ${y + event.detail.clientY - event.detail.startY}px)`
+    })
+</script>
