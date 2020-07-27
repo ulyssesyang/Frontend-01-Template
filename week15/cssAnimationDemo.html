@@ -10,6 +10,8 @@
 </head>
 <body>
     <div id="el"></div>
+    <button id="start" onclick="start()">Start</button>
+    <button id="stop" onclick="stop()">Stop</button>
 </body>
 <script>
     const el = document.getElementById('el');
@@ -19,7 +21,8 @@
     }
 
     function stop(params) {
-        el.style.transition = "none"; 
         el.style.transform  = getComputedStyle(el).transform;
+        el.style.transition = "none";
+        console.log(getComputedStyle(el).transform) //rotate, scale, translate, skew
     }
 </script>
