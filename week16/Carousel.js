@@ -10,6 +10,7 @@ export default class MyCarousel {
         this.stopHandler     = null;
         this.timeline        = new Timeline;
         this.currentPosition = 0;
+        this.offset          = 0;
     }
 
     setAttribute(name, value) {
@@ -50,7 +51,6 @@ export default class MyCarousel {
         let children = this.data.map((url) => {
             let lastPosition = (this.currentPosition - 1 + this.data.length) % this.data.length;
             let nextPosition = (this.currentPosition + 1) % this.data.length;
-            let offset;
 
             const onStart = () => {
                 this.timeline.pause();
@@ -59,8 +59,7 @@ export default class MyCarousel {
                 const  currentElement     = children[this.currentPosition];
                 const regexForTransform   = /translateX\(([\s\S]+)px\)/;
                 let currentTransformValue = Number(currentElement.style.transform.match(regexForTransform)[1]);
-
-                offset                = currentTransformValue + 500 * this.currentPosition;
+                this.offset               = currentTransformValue + 500 * this.currentPosition;
             }
 
             const onPanMove = (event) => {
@@ -69,9 +68,9 @@ export default class MyCarousel {
                 const currentElement = children[this.currentPosition];
                 const nextElement    = children[nextPosition];
                 
-                let lastTransformValue    = - 500 - 500 * lastPosition + offset + dx;
-                let currentTransformValue = - 500 * this.currentPosition + offset + dx;
-                let nextTransformValue    = 500 - 500 * nextPosition + offset + dx;
+                let lastTransformValue    = - 500 - 500 * lastPosition + this.offset + dx;
+                let currentTransformValue = - 500 * this.currentPosition + this.offset + dx;
+                let nextTransformValue    = 500 - 500 * nextPosition + this.offset + dx;
 
                 lastElement.style.transform    = `translateX(${lastTransformValue}px)`;
                 currentElement.style.transform = `translateX(${currentTransformValue}px)`;
@@ -84,8 +83,8 @@ export default class MyCarousel {
                 const currentElement = children[this.currentPosition];
                 const nextElement    = children[nextPosition];
 
-                let direction;
-                if (dx + offset > 250) {
+                let direction = 0;
+                if (dx + this.offset > 250) {
                     direction = 1;
                 } else {
                     direction = - 1;
@@ -94,13 +93,13 @@ export default class MyCarousel {
                 this.timeline.reset();
                 this.timeline.start();
 
-                let lastTransformValue    = - 500 - 500 * lastPosition + offset + dx;
-                let currentTransformValue = - 500 * this.currentPosition + offset + dx;
-                let nextTransformValue    = 500 - 500 * nextPosition + offset + dx;
+                let lastTransformValue    = - 500 - 500 * lastPosition + this.offset + dx;
+                let currentTransformValue = - 500 * this.currentPosition + this.offset + dx;
+                let nextTransformValue    = 500 - 500 * nextPosition + this.offset + dx;
 
-                let lastAnimation    = new Animation(lastElement.style, 'transform', v=>`translateX(${v}%)`, lastTransformValue, - 500 - 500 * lastPosition + direction * 500, 500, 0, ease);
-                let currentAnimation = new Animation(currentElement.style, 'transform', v=>`translateX(${v}%)`, currentTransformValue, - 500 * this.currentPosition + direction * 500, 500, 0, ease);
-                let nextAnimation    = new Animation(nextElement.style, 'transform', v=>`translateX(${v}%)`, nextTransformValue, 500 - 500 * nextPosition + direction * 500, 500, 0, ease);
+                let lastAnimation    = new Animation(lastElement.style, 'transform', v=>`translateX(${5 * v}px)`, lastTransformValue, - 500 - 500 * lastPosition + direction * 500, 500, 0, ease);
+                let currentAnimation = new Animation(currentElement.style, 'transform', v=>`translateX(${5 * v}px)`, currentTransformValue, - 500 * this.currentPosition + direction * 500, 500, 0, ease);
+                let nextAnimation    = new Animation(nextElement.style, 'transform', v=>`translateX(${5 * v}px)`, nextTransformValue, 500 - 500 * nextPosition + direction * 500, 500, 0, ease);
 
                 this.timeline.add(lastAnimation);
                 this.timeline.add(currentAnimation);

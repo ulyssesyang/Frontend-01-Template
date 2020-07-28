@@ -67,8 +67,6 @@ export class Timeline {
         this.startTime          = Date.now();
         this.pauseTime          = null;
         this.state              = 'initialized';
-        
-        this.tick()
     }
 
     restart() {
