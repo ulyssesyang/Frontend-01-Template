@@ -13,35 +13,24 @@ export function createElement(Cls, attributes, ...children) {
         element.setAttribute(name, attributes[name])
     }
 
-    for (const child of children) {
-        if (child instanceof Array) {
-            navigate(child, element);
-            continue;
+    function navigate(children) {
+        for (const child of children) {
+            if (child instanceof Array) {
+                navigate(child, element);
+                continue;
+            }
+    
+            if (typeof child === 'string') {
+                child = new Text(child);
+            }
+    
+            element.appendChild(child);
         }
-
-        if (typeof child === 'string') {
-            child = new Text(child);
-        }
-
-        element.appendChild(child);
     }
+
+    navigate(children);
 
     return element;
-}
-
-function navigate(children, element) {
-    for (const child of children) {
-        if (child instanceof Array) {
-            navigate(child, element);
-            continue;
-        }
-
-        if (typeof child === 'string') {
-            child = new Text(child);
-        }
-
-        element.appendChild(child);
-    }
 }
 
 export class Text {
@@ -63,9 +52,18 @@ export class Wrapper {
 
     setAttribute(name, value) {
         this.root.setAttribute(name, value);
+    
+        // parse any onEvent and event name
+        if (name.match(/^on([\s\S]+)$/)) {
+            // get name as lower case
+            const eventName = RegExp.$1.toLowerCase();
+            this.addEventListener(eventName, value);
+            console.log('eventName', eventName)
+        }
 
-        if (name === 'enableGesture') {
-            value(this.root)
+        // evoke enableGesture when value is true
+        if (name === 'enableGesture' && value) {
+            enableGesture(this.root)
         }
     }
 
@@ -74,7 +72,7 @@ export class Wrapper {
     }
 
     removeEventListener() {
-        this.root.addEventListener(...arguments);
+        this.root.removeEventListener(...arguments);
     }
 
     get style() {
@@ -88,7 +86,10 @@ export class Wrapper {
     mountTo(parent) {
         parent.appendChild(this.root);
         for (const child of this.children) {
-            child.mountTo(this.root)
+            if (typeof child === 'string') {
+                child = new Text(child);
+            }
+            child.mountTo(this.root);
         }
     }
 }

@@ -28,12 +28,12 @@
         console.log('trigger tap event !!!!!!')
     })
 
-    document.body.addEventListener('pan-move', event => {
+    document.body.addEventListener('panmove', event => {
         console.log('trigger pan move event !!!!!!',event.detail)
         element.style.transform = `translate(${x + event.detail.clientX - event.detail.startX}px, ${y + event.detail.clientY - event.detail.startY}px)`
     })
 
-    document.body.addEventListener('pan-end', event => {
+    document.body.addEventListener('panend', event => {
         console.log('trigger pan end event !!!!!!',event.detail)
         element.style.transform = `translate(${x}px, ${y}px)`
     })

@@ -56,8 +56,8 @@ export function enableGesture(element) {
     let start = (point, context) => {
         element.dispatchEvent(new CustomEvent('start', {
             detail: {
-                startX: context.startX,
-                startY: context.startY,
+                startX:  context.startX,
+                startY:  context.startY,
                 clientX: point.clientX,
                 clientY: point.clientY,
             }
@@ -65,11 +65,12 @@ export function enableGesture(element) {
 
         context.startX = point.clientX;
         context.startY = point.clientY;
-        context.moves = [];
+        context.moves  = [];
+
         console.log('start', context)
 
-        context.isTap = true;
-        context.isPan = false;
+        context.isTap   = true;
+        context.isPan   = false;
         context.isPress = false;
 
         context.timeoutHandler = setTimeout(() => {
@@ -77,13 +78,13 @@ export function enableGesture(element) {
                 return;
             }
 
-            context.isTap = false;
-            context.isPan = false;
+            context.isTap   = false;
+            context.isPan   = false;
             context.isPress = true;
 
             console.log('press start')
 
-            element.dispatchEvent(new CustomEvent('press-start', {}))
+            element.dispatchEvent(new CustomEvent('pressstart', {}))
         }, 500)
     }
 
@@ -95,18 +96,19 @@ export function enableGesture(element) {
         if (dx ** 2 + dy ** 2 > 100 && !context.isPan) {
             if (context.isPress) {
                 console.log('press cancel')
-                element.dispatchEvent(new CustomEvent('press-cancel', {}))
+                element.dispatchEvent(new CustomEvent('presscancel', {}))
             }
 
-            context.isTap = false;
-            context.isPan = true;
+            context.isTap   = false;
+            context.isPan   = true;
             context.isPress = false;
+
             console.log('pan start')
 
-            element.dispatchEvent(new CustomEvent('pan-start', {
+            element.dispatchEvent(new CustomEvent('panstart', {
                 detail: {
-                    startX: context.startX,
-                    startY: context.startY,
+                    startX:  context.startX,
+                    startY:  context.startY,
                     clientX: point.clientX,
                     clientY: point.clientY,
                 }
@@ -123,11 +125,12 @@ export function enableGesture(element) {
             // only cache recent 300ms actions
             context.moves = context.moves.filter(move => Date.now() - move.t < 300);
 
-            console.log('pan move')
-            element.dispatchEvent(new CustomEvent('pan-move', {
+            console.log('panmove')
+
+            element.dispatchEvent(new CustomEvent('panmove', {
                 detail: {
-                    startX: context.startX,
-                    startY: context.startY,
+                    startX:  context.startX,
+                    startY:  context.startY,
                     clientX: point.clientX,
                     clientY: point.clientY,
                 }
@@ -141,17 +144,17 @@ export function enableGesture(element) {
         if (context.isPan) {
             console.log('pan end')
 
-            let dx = point.clientX - context.startX;
-            let dy = point.clientY - context.startY;
+            let dx         = point.clientX - context.startX;
+            let dy         = point.clientY - context.startY;
             let latestMove = context.moves[0];
-            let speed = Math.sqrt(((latestMove.dx - dx) ** 2 + (latestMove.dy - dy) ** 2) / (Date.now() - latestMove.t));
+            let speed      = Math.sqrt(((latestMove.dx - dx) ** 2 + (latestMove.dy - dy) ** 2) / (Date.now() - latestMove.t));
 
             let isFlick = speed > 2.5;
 
-            element.dispatchEvent(new CustomEvent('pan-end', {
+            element.dispatchEvent(new CustomEvent('panend', {
                 detail: {
-                    startX: context.startX,
-                    startY: context.startY,
+                    startX:  context.startX,
+                    startY:  context.startY,
                     clientX: point.clientX,
                     clientY: point.clientY,
                     speed,
@@ -164,8 +167,8 @@ export function enableGesture(element) {
 
                 element.dispatchEvent(new CustomEvent('flick', {
                     detail: {
-                        startX: context.startX,
-                        startY: context.startY,
+                        startX:  context.startX,
+                        startY:  context.startY,
                         clientX: point.clientX,
                         clientY: point.clientY,
                         speed,
@@ -182,7 +185,7 @@ export function enableGesture(element) {
 
         if (context.isPress) {
             console.log('press end')
-            element.dispatchEvent(new CustomEvent('press-end', {}))
+            element.dispatchEvent(new CustomEvent('pressend', {}))
         }
 
         clearTimeout(context.timeoutHandler);
