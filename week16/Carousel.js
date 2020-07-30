@@ -84,9 +84,9 @@ export default class MyCarousel {
                 const nextElement    = children[nextPosition];
 
                 let direction = 0;
-                if (dx + this.offset > 250) {
+                if (dx + this.offset > 250 || dx > 0 && event.isFlick) {
                     direction = 1;
-                } else {
+                } else if(dx + this.offset < -250 || dx < 0 && event.isFlick) {
                     direction = - 1;
                 }
 
