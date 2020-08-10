@@ -1,4 +1,4 @@
-import { enableGesture } from "./gesture/gesture";
+import { enableGesture } from "./gesture";
 
 export function createElement(Cls, attributes, ...children) {
     let element;
@@ -42,6 +42,10 @@ export class Text {
     mountTo(parent) {
         parent.appendChild(this.root)
     }
+
+    getAttribute(name) {
+        return;
+    }
 }
 
 export class Wrapper {
@@ -67,6 +71,10 @@ export class Wrapper {
         }
     }
 
+    getAttribute(name) {
+        return this.root.getAttribute(name);
+    }
+
     addEventListener() {
         this.root.addEventListener(...arguments);
     }
@@ -77,6 +85,14 @@ export class Wrapper {
 
     get style() {
         return this.root.style;
+    }
+
+    set innerText(text) {
+        return this.root.innerText = text;
+    }
+
+    get classList() {
+        return this.root.classList;
     }
 
     appendChild(child) {
