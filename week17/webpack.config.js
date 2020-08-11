@@ -14,7 +14,19 @@ module.exports = {
             ]
           }
         }
-      }
+      },
+      {
+        test: /\.css$/,
+        use: {
+          loader: require.resolve('./lib/createStyle.js')
+        },
+      },
+      // {
+      //   test: /\.css$/,
+      //   use: {
+      //     loader: 'css-loader'
+      //   },
+      // }
     ]
   },
   mode: "development",
