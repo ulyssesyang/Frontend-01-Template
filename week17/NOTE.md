@@ -19,8 +19,9 @@
 ### category
 
 - initialize
-  - yeoman
-  - cli tools
+  - build generator cli tool
+    - yeoman
+  - popular generator cli tools
     - create-react-app
     - vue-cli
     - angular-cli
