@@ -39,7 +39,10 @@ function right(n = 1) {
 }
 
 void async function () {
-    await select(['vue', 'react', 'angular']);
+    stdout.write('which framework do you want to use?\n');
+    let answer = await select(['vue', 'react', 'angular']);
+    stdout.write(`You selected ${answer}\n`);
+    process.exit();
 }()
 
 async function select(choices) {
@@ -62,12 +65,25 @@ async function select(choices) {
             break;
         }
         if ((char === 'w') && selected > 0) {
+            stdout.write(' ')
+            left()
             selected --;
             up();
+            stdout.write('x')
+            left()
         }
         if (char === 's' && selected < choices.length - 1) {
+            stdout.write(' ')
+            left()
             selected ++;
             down();
+            stdout.write('x')
+            left()
+        }
+        if (char === '\r') {
+            down(choices.length - selected)
+            left()
+            return choices[selected];
         }
     }
 }
