@@ -7,7 +7,7 @@
 - build:
   - webpack
   - babel
-  - vue
+  - vue: @vue/compiler-sfc
   - react
   - jsx
   - postcss
