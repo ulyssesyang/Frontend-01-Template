@@ -19,6 +19,5 @@
 ### client
 
 - debugger
-  - vscode
-  - devtool
+  - vscode dev-tool
 - source map
