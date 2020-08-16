@@ -1,0 +1,17 @@
+{
+  "name": "test-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^3.11.1",
+    "mocha": "^8.1.1",
+    "nyc": "^15.1.0"
+  }
+}
