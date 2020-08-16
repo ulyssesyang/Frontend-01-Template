@@ -6,7 +6,7 @@ let currentTextNode = null;
 
 const EOF = Symbol('EOF'); // EOF: End of File
 
-const stack = [{
+let stack = [{
     type: 'document',
     children: []
 }];
@@ -165,7 +165,7 @@ function emit(token) {
 
         } else {
 
-            if (top.tagName === 'style') {
+            if (top.tagName === 'style' && top.children[0]) {
                 addCSSRules(top.children[0].content);
             }
             stack.pop();
@@ -232,10 +232,15 @@ function tagOpen(c) {
 
         emit({
             type: 'text',
+            content: '<'
+        });
+
+        emit({
+            type: 'text',
             content: c
         });
 
-        return;
+        return data;
 
     }
 }
@@ -251,11 +256,11 @@ function endTagOpen(c) {
         return tagName(c);
 
     } else if (c === '>') {
-
+        // return data;
     } else if (c === EOF) {
-
+        // return data;
     } else {
-
+        return data;
     }
 }
 
@@ -296,9 +301,9 @@ function selfClosingStartTag(c) {
         return data;
 
     } else if (c === EOF) {
-
+        // return data;
     } else {
-
+        // return data;
     }
 }
 
@@ -375,11 +380,11 @@ function attributeName(c) {
     } else if (c === '\u0000') {
 
         // throw new Error('Wrong style');
-
+        return data;
     } else if (c === "\"" || c === "'" || c === '<') {
 
         // throw new Error('Wrong style');
-
+        return data;
     } else {
 
         currentAttribute.name += c;
@@ -421,9 +426,9 @@ function doubleQuotedAttributeValue(c) {
         return afterQuotedAttributeValue;
 
     } else if (c === '\u0000') {
-
+        return data;
     } else if (c === EOF) {
-
+        return data;
     } else {
 
         currentAttribute.value += c;
@@ -439,9 +444,9 @@ function singleQuotedAttributeValue(c) {
         return afterQuotedAttributeValue;
 
     } else if (c === '\u0000') {
-
+        return data;
     } else if (c === EOF) {
-
+        return data;
     } else {
 
         currentAttribute.value += c;
@@ -467,7 +472,7 @@ function afterQuotedAttributeValue(c) {
         return data;
 
     } else if (c === EOF) {
-
+        return data;
     } else {
 
         currentAttribute.value += c;
@@ -510,6 +515,7 @@ function unquotedAttributeValue(c) {
 
 module.exports.parseHTML = function parseHTML(html) {
     let state = data;
+    stack = [{type: 'document', children: []}];
     for (const c of html) {
         state = state(c);
     }
