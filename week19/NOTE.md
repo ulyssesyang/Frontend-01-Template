@@ -30,7 +30,7 @@ Customized generator should handle all necessary dependencies like npm package, 
         });
 ````
 
-### use `fs.copyTpl` function for copy all necessary template files
+### use `fs.copyTpl` function for copy all necessary templates or config files
 
 ````JS
         this.fs.copyTpl(
